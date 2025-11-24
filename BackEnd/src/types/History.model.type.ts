@@ -6,5 +6,7 @@ export interface History extends Document {
   imageUrl?: [string];
   GeneratedImageUrl?: [string];
   prompt: string;
+  ImagePublicId?: [string];
+  AiImagePublicId?: [string];
   createdAt: { type: Date; default: Date };
 }

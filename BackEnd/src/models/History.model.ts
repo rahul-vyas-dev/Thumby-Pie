@@ -16,6 +16,8 @@ const HistorySchema: Schema<History> = new Schema(
     imageUrl: { type: [String] },
     GeneratedImageUrl: { type: [String] },
     prompt: String,
+    ImagePublicId: { type: [String] },
+    AiImagePublicId: { type: [String] },
     createdAt: { type: Date, default: Date.now() },
   },
   { timestamps: true }
