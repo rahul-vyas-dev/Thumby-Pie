@@ -6,5 +6,7 @@ export interface User extends Document {
   passwordHash: string;
   verifyCode: string;
   verifyCodeExpiry: Date;
+  isPasswordCorrect(password: string): Promise<boolean>;
+  generateAuthToken(): Promise<string>;
   createdAt: { type: Date; default: Date };
 }

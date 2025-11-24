@@ -1,7 +1,9 @@
 import mongoose, { Schema } from "mongoose";
 import { User } from "../types/User.model.type";
 import bcrypt from "bcryptjs";
-
+import jwt from "jsonwebtoken";
+import dotenv from "dotenv";
+dotenv.config();
 const Userschema: Schema<User> = new Schema(
   {
     name: {
@@ -38,6 +40,19 @@ Userschema.methods.isPasswordCorrect = async function (password: string) {
 
 Userschema.methods.isVerifyCodeExpired = async function () {
   return this.verifyCodeExpiry > Date.now();
+};
+
+Userschema.methods.generateAuthToken =async function () {
+  const token =await jwt.sign(
+    {
+      _id: this._id,
+      name: this.name,
+      email: this.email,
+    },
+    process.env.ACCESS_TOKEN_SECRET!,
+    { expiresIn: process.env.ACCESS_TOKEN_EXPIRY || "15m" }
+  );
+  return token;
 };
 
 const UserController = mongoose.model<User>("User", Userschema);

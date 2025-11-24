@@ -7,14 +7,36 @@
   ],
   "license": "ISC",
   "author": "JMB",
-  "type": "module",
+  "type": "commonjs",
   "main": "index.js",
   "scripts": {
-    "dev": "node index.js"
+    "dev": "nodemon src/index.ts",
+    "build": "tsc",
+    "start": "node dist/index.js"
   },
   "dependencies": {
+    "@react-email/components": "^1.0.1",
+    "axios": "^1.13.2",
     "bcryptjs": "^3.0.3",
+    "dotenv": "^17.2.3",
     "express": "^5.1.0",
-    "mongoose": "^9.0.0"
+    "jsonwebtoken": "^9.0.2",
+    "mongoose": "^9.0.0",
+    "multer": "^2.0.2",
+    "react": "^19.2.0",
+    "react-dom": "^19.2.0",
+    "react-email": "^5.0.5",
+    "resend": "^6.5.2"
+  },
+  "devDependencies": {
+    "@types/bcryptjs": "^2.4.6",
+    "@types/dotenv": "^6.1.1",
+    "@types/express": "^5.0.5",
+    "@types/multer": "^2.0.0",
+    "@types/react": "^19.2.6",
+    "@types/react-dom": "^19.2.3",
+    "nodemon": "^3.1.11",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.9.3"
   }
 }
