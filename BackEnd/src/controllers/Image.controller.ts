@@ -25,7 +25,7 @@ async function imageUrlToBase64(url: string) {
 }
 
 export const CreateNewImage = async (
-  req: UploadRequest,
+  req: Request,
   res: Response<ApiResponse<History>>
 ) => {
   try {
@@ -40,7 +40,7 @@ export const CreateNewImage = async (
     if (!sessionId || !prompt) {
       throw new ApiError(400, "Session Id and Prompt are required");
     }
-    const UserImage = req.files?.UserImage;
+    const UserImage = req.files ? (req.files as { [fieldname: string]: Express.Multer.File[] })['UserImage'] : [];
     if (!UserImage || UserImage.length === 0) {
       throw new ApiError(400, "User Image is required");
     }
@@ -171,7 +171,7 @@ Produce the final output in maximum available quality.`,
 };
 
 export const EditExistingImage = async (
-  req: UploadRequest,
+  req: Request,
   res: Response<ApiResponse<History>>
 ) => {
   try {

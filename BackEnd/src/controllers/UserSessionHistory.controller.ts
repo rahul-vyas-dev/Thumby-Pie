@@ -3,6 +3,7 @@ import { ApiResponse } from "../utils/ApiResponse";
 import HistoryController from "../models/History.model";
 import { History } from "../types/History.model.type";
 import { Request, Response } from "express";
+import { DeleteFile } from "../utils/Cloudinary";
 
 export const GetSessionHistory = async (
   req: Request,
@@ -20,7 +21,7 @@ export const GetSessionHistory = async (
     const SessionHistory = await HistoryController.find({
       userId: User._id,
       sessionId,
-    }).sort({ createdAt: -1 }); 
+    }).sort({ createdAt: -1 });
     if (!SessionHistory) {
       throw new ApiError(404, "No History found");
     }
@@ -31,13 +32,15 @@ export const GetSessionHistory = async (
       statusCode: 200,
     });
   } catch (error) {
-      console.log('Internal server Error', error);
-      throw new ApiError(500, 'internal server Error', error);
+    console.log("Internal server Error", error);
+    throw new ApiError(500, "internal server Error", error);
   }
 };
 
-export const DeleteSessionChat = async (req: Request<{}, {}, { data: History }>, res: Response<ApiResponse<null>>) =>
-{
+export const DeleteSessionChat = async (
+  req: Request<{}, {}, { data: History }>,
+  res: Response<ApiResponse<null>>
+) => {
   try {
     const User = req?.user;
     if (!User) {
@@ -45,11 +48,20 @@ export const DeleteSessionChat = async (req: Request<{}, {}, { data: History }>,
     }
     const { data } = req.body;
     if (!data) {
-      throw new ApiError(400, "History data is required");    
+      throw new ApiError(400, "History data is required");
     }
     const deleteResult = await HistoryController.deleteOne({
       _id: data._id,
       userId: User._id,
+    });
+    if (deleteResult.deletedCount === 0) {
+      throw new ApiError(404, "No History found to delete");
+    }
+    data.ImagePublicId!.forEach(async (id) => {
+      await DeleteFile(id);
+    });
+    data.AiImagePublicId!.forEach(async (id) => {
+      await DeleteFile(id);
     });
     return res.json({
       success: true,
@@ -58,8 +70,7 @@ export const DeleteSessionChat = async (req: Request<{}, {}, { data: History }>,
       statusCode: 200,
     });
   } catch (error) {
-    console.log
-    ('Internal server Error', error);
-    throw new ApiError(500, 'internal server Error', error);
+    console.log("Internal server Error", error);
+    throw new ApiError(500, "internal server Error", error);
   }
 };
