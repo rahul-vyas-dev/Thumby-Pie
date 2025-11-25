@@ -35,6 +35,7 @@ Userschema.pre("save", async function (next) {
 });
 
 Userschema.methods.isPasswordCorrect = async function (password: string) {
+  console.log("Comparing password:", password, "with hash:", this.passwordHash, this._id, this.email, this.name);
   return await bcrypt.compare(password, this.passwordHash);
 };
 
@@ -42,7 +43,8 @@ Userschema.methods.isVerifyCodeExpired = async function () {
   return this.verifyCodeExpiry > Date.now();
 };
 
-Userschema.methods.generateAuthToken =async function () {
+Userschema.methods.generateAuthToken = async function () {
+  console.log("Generating auth token for user:", this._id, this.email, this.name);
   const token =await jwt.sign(
     {
       _id: this._id,

@@ -12,7 +12,11 @@ export const SignUp = async (
   try {
     const { email, password, name } = req.body;
     if (!email || !password || !name) {
-      throw new ApiError(400, "All fields are required");
+      throw new ApiError(
+        400,
+        "All fields are required",
+        "All fields are required"
+      );
     }
     const isUserExists = await UserController.findOne({ email });
     if (isUserExists) {
@@ -29,13 +33,18 @@ export const SignUp = async (
       verifyCode,
     });
     if (!response) {
-      throw new ApiError(500, "Interal server Error!!");
+      throw new ApiError(
+        500,
+        "Interal server Error!!",
+        "Interal server Error!!"
+      );
     }
 
     const token = await response.generateAuthToken();
     const emailResponse = await sendEmail({ name, verifyCode, email });
     if (!emailResponse.success) {
-      throw new ApiError(500, "Internal server Error");
+      await UserController.findByIdAndDelete(response._id);
+      throw new ApiError(500, "Internal server Error", "Internal server Error");
     }
     return res
       .cookie("accessToken", token, {
@@ -55,15 +64,16 @@ export const SignUp = async (
       "error in registering user ->(src :: app :: api :: signUp :: route)",
       error
     );
-    return Response.json(
-      {
-        success: false,
-        message: "error in registering user",
-      },
-      {
-        status: 500,
-      }
-    );
+    throw new ApiError(500, "error in registering user", error);
+    // return Response.json(
+    //   {
+    //     success: false,
+    //     message: "error in registering user",
+    //   },
+    //   {
+    //     status: 500,
+    //   }
+    // );
   }
 };
 
@@ -72,19 +82,26 @@ export const SignIn = async (
   res: Response<ApiResponse<User>>
 ) => {
   try {
-    const { email, password } = req.body;
+    const email = req.body?.email;
+    const password = req.body?.password;
 
     if (!email || !password)
-      throw new ApiError(401, "Email and Password are required");
+      throw new ApiError(
+        401,
+        "Email and Password are required",
+        "Email and Password are required"
+      );
 
     const isUserExists = await UserController.findOne({ email }).select(
-      "-passwordHash"
+      "-passwordHash -verifyCodeExpiry -verifyCode"
     );
 
-    if (!isUserExists) throw new ApiError(401, "not a valid Email");
-
-    const isPasswordValid = isUserExists.isPasswordCorrect(password);
-    if (!isPasswordValid) throw new ApiError(401, "Password is Incorrect");
+    if (!isUserExists)
+      throw new ApiError(401, "not a valid Email", "not a valid Email");
+    const userWithPassword = await UserController.findOne({ email });
+    const isPasswordValid = await userWithPassword!.isPasswordCorrect(password);
+    if (!isPasswordValid)
+      throw new ApiError(401, "Password is Incorrect", "Password is Incorrect");
 
     const token = await isUserExists.generateAuthToken();
 
@@ -98,11 +115,12 @@ export const SignIn = async (
       .json({
         success: true,
         message: "User login successfully",
-        data: isUserExists,
+        data: [isUserExists],
         statusCode: 200,
         accessToken: token,
       });
   } catch (error) {
+    console.log("error during Sign-In ", error);
     throw new ApiError(500, "error during Sign-In ", error);
   }
 };

@@ -12,18 +12,18 @@ export const GetSessionHistory = async (
   try {
     const User = req?.user;
     if (!User) {
-      throw new ApiError(401, "Not Authorized");
+      throw new ApiError(401, "Not Authorized", "Not Authorized");
     }
-    const { sessionId } = req.body;
+    const sessionId = req.body?.sessionId;
     if (!sessionId) {
-      throw new ApiError(400, "Session Id is required");
+        throw new ApiError(400, "Session Id is required", "Session Id is required");
     }
     const SessionHistory = await HistoryController.find({
       userId: User._id,
       sessionId,
     }).sort({ createdAt: -1 });
-    if (!SessionHistory) {
-      throw new ApiError(404, "No History found");
+    if (SessionHistory.length === 0) {
+      throw new ApiError(404, "No History found", "No History found");
     }
     return res.json({
       success: true,
@@ -44,18 +44,18 @@ export const DeleteSessionChat = async (
   try {
     const User = req?.user;
     if (!User) {
-      throw new ApiError(401, "Not Authorized");
+      throw new ApiError(401, "Not Authorized", "Not Authorized");
     }
-    const { data } = req.body;
+    const data = req.body?.data;
     if (!data) {
-      throw new ApiError(400, "History data is required");
+      throw new ApiError(400, "History data is required", "History data is required");
     }
     const deleteResult = await HistoryController.deleteOne({
       _id: data._id,
       userId: User._id,
     });
     if (deleteResult.deletedCount === 0) {
-      throw new ApiError(404, "No History found to delete");
+      throw new ApiError(404, "No History found to delete", "No History found to delete");
     }
     data.ImagePublicId!.forEach(async (id) => {
       await DeleteFile(id);

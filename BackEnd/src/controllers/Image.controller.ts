@@ -8,6 +8,7 @@ import dotenv from "dotenv";
 import { GoogleGenAI } from "@google/genai";
 import axios from "axios";
 import fs from "fs";
+import { ModifiedPrompt } from "../secret";
 dotenv.config();
 
 interface UploadRequest extends Request {
@@ -34,26 +35,45 @@ export const CreateNewImage = async (
     });
     const user = req?.user;
     if (!user) {
-      throw new ApiError(401, "Not Authorized");
+      throw new ApiError(401, "Not Authorized", "Not Authorized");
     }
-    const { sessionId, prompt } = req.body;
+    const sessionId = req.body?.sessionId;
+    const prompt = req.body?.prompt;
+    console.log("Received prompt:", prompt, sessionId);
     if (!sessionId || !prompt) {
-      throw new ApiError(400, "Session Id and Prompt are required");
+      throw new ApiError(
+        400,
+        "Session Id and Prompt are required",
+        "Session Id and Prompt are required"
+      );
     }
-    const UserImage = req.files ? (req.files as { [fieldname: string]: Express.Multer.File[] })['UserImage'] : [];
+    const UserImage = req.files
+      ? (req.files as { [fieldname: string]: Express.Multer.File[] })[
+          "UserImage"
+        ]
+      : [];
+    console.log("Received files:", UserImage);
     if (!UserImage || UserImage.length === 0) {
-      throw new ApiError(400, "User Image is required");
+      throw new ApiError(
+        400,
+        "User Image is required",
+        "User Image is required"
+      );
     }
-    const imageUrl: string[] = [];
-    const ImagePublicId: string[] = [];
-    UserImage.forEach(async (file) => {
-      const uploadResult = await UploadFile(file.path);
-      imageUrl.push(uploadResult.secure_url);
-      ImagePublicId.push(uploadResult.public_id);
-    });
 
-    if (imageUrl.length === 0) {
-      throw new ApiError(500, "Error in uploading images");
+    const uploadResults = await Promise.all(
+      UserImage.map((file) => UploadFile(file.path))
+    );
+    console.log("Upload results:", uploadResults[0]);
+    const imageUrl = uploadResults.map((r) => r.secure_url);
+    const ImagePublicId = uploadResults.map((r) => r.public_id);
+
+    if (imageUrl.length == 0) {
+      throw new ApiError(
+        500,
+        "Error in uploading images",
+        "Error in uploading images"
+      );
     }
 
     const base64Images = await Promise.all(
@@ -61,58 +81,38 @@ export const CreateNewImage = async (
     );
 
     if (!base64Images) {
-      throw new ApiError(500, "Error in processing images");
+      throw new ApiError(
+        500,
+        "Error in processing images",
+        "Error in processing images"
+      );
     }
-
+    const modifiedPrompt: string = ModifiedPrompt(prompt);
     const PromptForAi = [
       {
-        text: `You are an advanced vision–image generation model with the ability to understand complex scenes, textures, lighting conditions, human expressions, and multi-object compositions with very high accuracy.
-
-Your task is to create a highly detailed, ultra-realistic, high-resolution image based entirely on the following user requirement:
-
-"${prompt}"
-
-Please interpret this prompt with maximum depth and creativity, while staying fully aligned with the user’s intent.
-
-If reference images are provided, analyze every small detail from them, including:
-- facial structure
-- clothing textures
-- surrounding environment
-- lighting direction and intensity
-- colors, shadows, reflections, and surface details
-- object arrangement and composition
-- background realism and perspective depth
-
-Then generate a new image that blends all relevant features from the reference images while matching the user’s desired output.
-
-The resulting image must have:
-- extremely high clarity and sharpness
-- realistic lighting and shadows
-- detailed textures and smooth gradients
-- accurate proportions and anatomy
-- visually appealing color balance
-- cinematic depth, atmosphere, and mood
-- no distortions, no extra limbs, no warped features
-- clean edges and correct geometry
-
-Focus on realism, coherence, and professional-grade artistic quality.  
-Produce the final output in maximum available quality.`,
+        text: modifiedPrompt,
       },
       ...base64Images.map((img) => ({ inlineData: img })),
     ];
 
     const AiImageResponse = await ai.models.generateContent({
-      model: "gemini-2.5-flash-image",
+      model: "gemini-2.5-flash",
       contents: PromptForAi,
     });
+console.log('AI Image Response:', AiImageResponse);
+let index = 1;
+const AiGeneratedUploadedImagesUrl: string[] = [];
+const AiGeneratedUploadedImagesPublicId: string[] = [];
 
-    let index = 1;
-    const AiGeneratedUploadedImagesUrl: string[] = [];
-    const AiGeneratedUploadedImagesPublicId: string[] = [];
-
-    if (!AiImageResponse?.candidates?.length) {
-      throw new ApiError(500, "error in image creation");
-    }
+if (!AiImageResponse?.candidates?.length) {
+  throw new ApiError(
+    500,
+    "error in image creation",
+    "error in image creation"
+  );
+}
+console.log("AI Image Response:", AiImageResponse!.candidates[0]?.content?.parts);
+console.log("AI Image Response:", AiImageResponse!.candidates[0]?.content);
 
     for (const part of AiImageResponse?.candidates[0]?.content?.parts || []) {
       if (!part?.inlineData?.data) {
@@ -138,7 +138,11 @@ Produce the final output in maximum available quality.`,
       AiGeneratedUploadedImagesUrl.length === 0 ||
       AiGeneratedUploadedImagesPublicId.length === 0
     ) {
-      throw new ApiError(500, "No images were generated by the AI");
+      throw new ApiError(
+        500,
+        "No images were generated by the AI",
+        "No images were generated by the AI"
+      );
     }
 
     const NewImageRecord = await HistoryController.create({
@@ -159,14 +163,7 @@ Produce the final output in maximum available quality.`,
     });
   } catch (error) {
     console.log("Error in CreateNewImage:", error);
-    if (error instanceof ApiError) {
-      return res.status(error.statusCode).json({
-        success: false,
-        message: error.message,
-        data: [],
-        statusCode: error.statusCode,
-      });
-    }
+    throw new ApiError(500, "Internal Server Error", error);
   }
 };
 
@@ -255,10 +252,10 @@ Keep the original subject, style, lighting, background, and proportions the same
     const NewImageRecord = await HistoryController.create({
       userId: user._id,
       sessionId,
-      imageUrl:existingRecord.imageUrl,
+      imageUrl: existingRecord.imageUrl,
       GeneratedImageUrl: AiGeneratedUploadedImagesUrl,
       prompt,
-      ImagePublicId:existingRecord.ImagePublicId,
+      ImagePublicId: existingRecord.ImagePublicId,
       AiImagePublicId: AiGeneratedUploadedImagesPublicId,
     });
 

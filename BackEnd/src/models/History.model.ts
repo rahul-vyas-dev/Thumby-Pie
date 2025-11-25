@@ -9,8 +9,7 @@ const HistorySchema: Schema<History> = new Schema(
       required: true,
     },
     sessionId: {
-      type: new mongoose.Schema.Types.ObjectId("Session"),
-      ref: "Session",
+      type: String,
       required: true,
     },
     imageUrl: { type: [String] },
