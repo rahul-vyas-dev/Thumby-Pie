@@ -8,5 +8,6 @@ export interface User extends Document {
   verifyCodeExpiry: Date;
   isPasswordCorrect(password: string): Promise<boolean>;
   generateAuthToken(): Promise<string>;
+  isVerifyCodeExpired(): boolean;
   createdAt: { type: Date; default: Date };
 }

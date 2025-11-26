@@ -18,10 +18,10 @@ export async function sendEmail({
   try {
     const resend = new Resend(process.env.RESEND_API_KEY);
     const data = await resend.emails.send({
-      from: "mSgBoX <onboarding@resend.dev>",
+      from: "ThumbyPie <onboarding@resend.dev>",
       to: email,
       subject: "ThumbyPie Message Verification Code",
-      react: getVerificationEmailHtml({ name, verifyCode }),
+      react:await getVerificationEmailHtml({ name, verifyCode }),
     });
     console.log(
       "email sent successfully ->(helpers :: sendVerificationEmail)",

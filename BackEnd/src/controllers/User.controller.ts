@@ -124,3 +124,43 @@ export const SignIn = async (
     throw new ApiError(500, "error during Sign-In ", error);
   }
 };
+
+export const verifyCode = async (
+  req: Request,
+  res: Response<ApiResponse<User>>
+) => {
+  try {
+    const email = req.body?.email;
+    const verifyCode = req.body?.verifyCode;
+    if (!email || !verifyCode)
+      throw new ApiError(
+        401,
+        "Email and verifyCode are required",
+        "Email and verifyCode are required"
+      );
+
+    const user = await UserController.findOne({ email });
+    if (!user)
+      throw new ApiError(401, "not a valid Email", "not a valid Email");
+    if (user.verifyCode !== verifyCode)
+      throw new ApiError(401, "Invalid verify code", "Invalid verify code");
+    const IsCodeNotExpired = user.isVerifyCodeExpired();
+    console.log(IsCodeNotExpired);
+    if (!IsCodeNotExpired)
+      throw new ApiError(
+        401,
+        "Verify code has expired",
+        "Verify code has expired"
+      );
+
+    return res.json({
+      success: true,
+      message: "Verify code is valid",
+      statusCode: 200,
+      data: [user],
+    });
+  } catch (error) {
+    console.log("error during verify code ", error);
+    throw new ApiError(500, "error during verify code ", error);
+  }
+};

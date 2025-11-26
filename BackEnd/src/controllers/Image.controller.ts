@@ -113,7 +113,19 @@ export const CreateNewImage = async (
       imageSize: image_size || "16:9",
     };
 
-    const taskId: aiGenRes = await axios.post(URL, Body, { headers: Header });
+    const taskId: aiGenRes = await axios
+      .post(URL, Body, { headers: Header })
+      .catch((error) => {
+        console.log(
+          "Error in AI generation request:",
+          error.response?.data || error
+        );
+        throw new ApiError(
+          500,
+          "Error in AI generation request",
+          error.response?.data || error.message
+        );
+      });
     console.log("AI Generation Task ID:", taskId);
 
     if (taskId.data.code !== 200) {
@@ -125,7 +137,8 @@ export const CreateNewImage = async (
     }
 
     const taskIdValue = taskId.data.data.taskId;
-    const fetchGeneratedImagesUrl: aiGenImageRes = await fetchGeneratedImagesUrlMethod(taskIdValue);
+    const fetchGeneratedImagesUrl: aiGenImageRes =
+      await fetchGeneratedImagesUrlMethod(taskIdValue);
 
     console.log("Fetched Generated Images:", fetchGeneratedImagesUrl.data);
 
@@ -137,7 +150,9 @@ export const CreateNewImage = async (
       );
     }
 
-    const generatedImagesBuffer = await fetchImageBuffer(fetchGeneratedImagesUrl.data.data.response.resultImageUrl);
+    const generatedImagesBuffer = await fetchImageBuffer(
+      fetchGeneratedImagesUrl.data.data.response.resultImageUrl
+    );
     const uploaded = await uploadBufferToCloudinary(generatedImagesBuffer);
 
     console.log("Uploaded Generated Image to Cloudinary:", uploaded);
@@ -227,7 +242,8 @@ export const EditExistingImage = async (
 
     const taskId: aiGenRes = await axios.post(URL, Body, { headers: Header });
     const taskIdValue = taskId.data.data.taskId;
-    const fetchGeneratedImagesUrl: aiGenImageRes = await fetchGeneratedImagesUrlMethod(taskIdValue);
+    const fetchGeneratedImagesUrl: aiGenImageRes =
+      await fetchGeneratedImagesUrlMethod(taskIdValue);
 
     console.log("Fetched Generated Images:", fetchGeneratedImagesUrl.data);
     // console.log("Fetched Generated Images:", fetchGeneratedImagesUrl);

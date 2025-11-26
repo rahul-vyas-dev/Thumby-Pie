@@ -40,18 +40,20 @@ Userschema.methods.isPasswordCorrect = async function (password: string) {
 };
 
 Userschema.methods.isVerifyCodeExpired = async function () {
-  return this.verifyCodeExpiry > Date.now();
+  console.log('code expiry time:', this.verifyCodeExpiry, 'current time:', new Date(Date.now()));
+  const currentTime = new Date(Date.now());
+  return this.verifyCodeExpiry > currentTime;
 };
 
 Userschema.methods.generateAuthToken = async function () {
   console.log("Generating auth token for user:", this._id, this.email, this.name);
-  const token =await jwt.sign(
+  const token = await jwt.sign(
     {
       _id: this._id,
       name: this.name,
       email: this.email,
     },
-    process.env.ACCESS_TOKEN_SECRET!,
+    process.env.ACCESS_TOKEN_EXPIRY,
     { expiresIn: process.env.ACCESS_TOKEN_EXPIRY || "15m" }
   );
   return token;
