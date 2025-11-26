@@ -2,27 +2,42 @@ import { ApiError } from "../utils/ApiError";
 import { ApiResponse } from "../utils/ApiResponse";
 import HistoryController from "../models/History.model";
 import { History } from "../types/History.model.type";
-import { Request, response, Response } from "express";
-import { UploadFile } from "../utils/Cloudinary";
+import { Request, Response } from "express";
+import { uploadBufferToCloudinary, UploadFile } from "../utils/Cloudinary";
 import dotenv from "dotenv";
-import { GoogleGenAI } from "@google/genai";
-import axios from "axios";
-import fs from "fs";
-import { ModifiedPrompt } from "../secret";
+import { ModifiedPrompt, ModifiedPromptForEditImage } from "../secret";
+import fetchImageBuffer from "../utils/fetchBufferImage";
+import { AiGeneratedImageTaskId, fetchGeneratedImagesUrlMethod, } from "../utils/GenerateNewAiImage";
 dotenv.config();
 
-interface UploadRequest extends Request {
-  files: {
-    UserImage: Express.Multer.File[];
+interface aiGenRes {
+  data: {
+    code: number;
+    msg: string;
+    data: {
+      taskId: string;
+    };
   };
 }
-
-async function imageUrlToBase64(url: string) {
-  const response = await axios.get(url, { responseType: "arraybuffer" });
-  const mimeType = response.headers["content-type"];
-  const base64 = Buffer.from(response.data).toString("base64");
-
-  return { mimeType, data: base64 };
+interface aiGenImageRes {
+  data: {
+    code: number;
+    msg: string;
+    data: {
+      taskId: string;
+      paramJson: string;
+      completeTime: string;
+      response: {
+        originImageUrl: null;
+        resultImageUrl: string;
+      };
+      successFlag: boolean;
+      errorCode: null;
+      errorMessage: null;
+      operationType: string;
+      createTime: string;
+    };
+  };
 }
 
 export const CreateNewImage = async (
@@ -30,16 +45,16 @@ export const CreateNewImage = async (
   res: Response<ApiResponse<History>>
 ) => {
   try {
-    const ai = new GoogleGenAI({
-      apiKey: process.env.GOOGLE_API_KEY || "",
-    });
+   
     const user = req?.user;
     if (!user) {
       throw new ApiError(401, "Not Authorized", "Not Authorized");
     }
     const sessionId = req.body?.sessionId;
+    const image_size = req.body?.image_size;
     const prompt = req.body?.prompt;
     console.log("Received prompt:", prompt, sessionId);
+
     if (!sessionId || !prompt) {
       throw new ApiError(
         400,
@@ -65,6 +80,7 @@ export const CreateNewImage = async (
       UserImage.map((file) => UploadFile(file.path))
     );
     console.log("Upload results:", uploadResults[0]);
+
     const imageUrl = uploadResults.map((r) => r.secure_url);
     const ImagePublicId = uploadResults.map((r) => r.public_id);
 
@@ -76,63 +92,49 @@ export const CreateNewImage = async (
       );
     }
 
-    const base64Images = await Promise.all(
-      imageUrl.map((url) => imageUrlToBase64(url))
-    );
+    const modifiedPrompt: string = ModifiedPrompt(prompt);
+  
+    const AiGeneratedUploadedImagesUrl: string[] = [];
+    const AiGeneratedUploadedImagesPublicId: string[] = [];
 
-    if (!base64Images) {
+    const taskId: aiGenRes = await AiGeneratedImageTaskId({
+      modifiedPrompt,
+      UserImage: imageUrl,
+      image_size,
+    });
+    console.log("AI Generation Task ID:", taskId);
+
+    if (taskId.data.code !== 200) {
       throw new ApiError(
         500,
-        "Error in processing images",
-        "Error in processing images"
+        "Error in AI image generation",
+        "Error in AI image generation"
       );
     }
-    const modifiedPrompt: string = ModifiedPrompt(prompt);
-    const PromptForAi = [
-      {
-        text: modifiedPrompt,
-      },
-      ...base64Images.map((img) => ({ inlineData: img })),
-    ];
 
-    const AiImageResponse = await ai.models.generateContent({
-      model: "gemini-2.5-flash",
-      contents: PromptForAi,
-    });
-console.log('AI Image Response:', AiImageResponse);
-let index = 1;
-const AiGeneratedUploadedImagesUrl: string[] = [];
-const AiGeneratedUploadedImagesPublicId: string[] = [];
+    const taskIdValue = taskId.data.data.taskId;
+    const fetchGeneratedImagesUrl: aiGenImageRes = await fetchGeneratedImagesUrlMethod(taskIdValue);
 
-if (!AiImageResponse?.candidates?.length) {
-  throw new ApiError(
-    500,
-    "error in image creation",
-    "error in image creation"
-  );
-}
-console.log("AI Image Response:", AiImageResponse!.candidates[0]?.content?.parts);
-console.log("AI Image Response:", AiImageResponse!.candidates[0]?.content);
+    console.log("Fetched Generated Images:", fetchGeneratedImagesUrl.data);
+    console.log("Fetched Generated Images:", fetchGeneratedImagesUrl);
 
-    for (const part of AiImageResponse?.candidates[0]?.content?.parts || []) {
-      if (!part?.inlineData?.data) {
-        console.warn("No image data found in this part. Skipping...");
-        continue;
-      }
-      if (part.inlineData) {
-        const outputBuffer = Buffer.from(part.inlineData.data, "base64");
-        const filePath = `generated/output_${Date.now()}_${index}.png`;
-        fs.writeFileSync(filePath, outputBuffer);
-        const uploaded = await UploadFile(filePath);
-
-        AiGeneratedUploadedImagesUrl.push(uploaded.secure_url);
-        AiGeneratedUploadedImagesPublicId.push(uploaded.public_id);
-
-        fs.unlinkSync(filePath);
-
-        index++;
-      }
+    if (fetchGeneratedImagesUrl.data.code !== 200) {
+      throw new ApiError(
+        500,
+        "Error in fetching generated images",
+        "Error in fetching generated images"
+      );
     }
+
+    const generatedImagesBuffer = await fetchImageBuffer(
+      fetchGeneratedImagesUrl.data.data.response.resultImageUrl
+    );
+    const uploaded = await uploadBufferToCloudinary(generatedImagesBuffer);
+
+    console.log("Uploaded Generated Image to Cloudinary:", uploaded);
+
+    AiGeneratedUploadedImagesUrl.push(uploaded.secure_url);
+    AiGeneratedUploadedImagesPublicId.push(uploaded.public_id);
 
     if (
       AiGeneratedUploadedImagesUrl.length === 0 ||
@@ -172,16 +174,16 @@ export const EditExistingImage = async (
   res: Response<ApiResponse<History>>
 ) => {
   try {
-    const ai = new GoogleGenAI({
-      apiKey: process.env.GOOGLE_API_KEY || "",
-    });
     const user = req?.user;
     if (!user) {
       throw new ApiError(401, "Not Authorized");
     }
-    const { sessionId, prompt, _id } = req.body;
-    if (!sessionId || !prompt) {
-      throw new ApiError(400, "Session Id and Prompt are required");
+    const sessionId = req.body?.sessionId;
+    const prompt = req.body?.prompt;
+    const _id = req.body?._id;
+    const image_size = req.body?.image_size;
+    if (!sessionId || !prompt||!_id) {
+      throw new ApiError(400, "Session Id, Prompt, and ID are required");
     }
 
     const existingRecord = await HistoryController.findById(_id);
@@ -193,54 +195,56 @@ export const EditExistingImage = async (
       throw new ApiError(400, "User Image is required");
     }
 
-    const base64Images = await Promise.all(
-      UserImage.map((url) => imageUrlToBase64(url))
-    );
-
-    if (!base64Images) {
-      throw new ApiError(500, "Error in processing images");
-    }
-
-    const PromptForAi = [
-      {
-        text: `Update the provided image based on the following change: add a red jacket. 
-Keep the original subject, style, lighting, background, and proportions the same, but apply the requested modification naturally and realistically.`,
-      },
-      ...base64Images.map((img) => ({ inlineData: img })),
-    ];
-
-    const AiImageResponse = await ai.models.generateContent({
-      model: "gemini-2.5-flash-image",
-      contents: PromptForAi,
-    });
-
-    let index = 1;
     const AiGeneratedUploadedImagesUrl: string[] = [];
     const AiGeneratedUploadedImagesPublicId: string[] = [];
 
-    if (!AiImageResponse?.candidates?.length) {
-      throw new ApiError(500, "error in image creation");
+    const modifiedPrompt: string = ModifiedPromptForEditImage(prompt);
+
+    const taskId: aiGenRes = await AiGeneratedImageTaskId({
+      modifiedPrompt,
+      UserImage,
+      image_size,
+    });
+    console.log("AI Generation Task ID:", taskId);
+
+    if (taskId.data.code !== 200) {
+      throw new ApiError(
+        500,
+        "Error in AI image generation",
+        "Error in AI image generation"
+      );
     }
+    const taskIdValue = taskId.data.data.taskId;
+    const fetchGeneratedImagesUrl: aiGenImageRes =
+      await fetchGeneratedImagesUrlMethod(taskIdValue);
 
-    for (const part of AiImageResponse?.candidates[0]?.content?.parts || []) {
-      if (!part?.inlineData?.data) {
-        console.warn("No image data found in this part. Skipping...");
-        continue;
-      }
-      if (part.inlineData) {
-        const outputBuffer = Buffer.from(part.inlineData.data, "base64");
-        const filePath = `generated/output_${Date.now()}_${index}.png`;
-        fs.writeFileSync(filePath, outputBuffer);
-        const uploaded = await UploadFile(filePath);
+    console.log("Fetched Generated Images:", fetchGeneratedImagesUrl.data);
+    // console.log("Fetched Generated Images:", fetchGeneratedImagesUrl);
 
-        AiGeneratedUploadedImagesUrl.push(uploaded.secure_url);
-        AiGeneratedUploadedImagesPublicId.push(uploaded.public_id);
-
-        fs.unlinkSync(filePath);
-
-        index++;
-      }
+    if (fetchGeneratedImagesUrl.data.code !== 200) {
+      throw new ApiError(
+        500,
+        "Error in fetching generated images",
+        "Error in fetching generated images"
+      );
     }
+    if (!fetchGeneratedImagesUrl.data.data.response) {
+      throw new ApiError(
+        500,
+        "No response data found for generated images",
+        "No response data found for generated images"
+      );
+    }
+    const generatedImagesBuffer = await fetchImageBuffer(
+      fetchGeneratedImagesUrl.data.data.response?.resultImageUrl
+    );
+
+    const uploaded = await uploadBufferToCloudinary(generatedImagesBuffer);
+
+    console.log("Uploaded Generated Image to Cloudinary:", uploaded);
+
+    AiGeneratedUploadedImagesUrl.push(uploaded.secure_url);
+    AiGeneratedUploadedImagesPublicId.push(uploaded.public_id);
 
     if (
       AiGeneratedUploadedImagesUrl.length === 0 ||
