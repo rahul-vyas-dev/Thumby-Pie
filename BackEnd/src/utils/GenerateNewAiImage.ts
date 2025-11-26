@@ -2,15 +2,6 @@ import axios from "axios";
 import dotenv from "dotenv";
 dotenv.config();
 
-interface aiGenRes {
-  data: {
-    code: number;
-    msg: string;
-    data: {
-      taskId: string;
-    };
-  };
-}
 interface aiGenImageRes {
   data: {
     code: number;
@@ -30,26 +21,6 @@ interface aiGenImageRes {
       createTime: string;
     };
   };
-}
-export async function AiGeneratedImageTaskId({ modifiedPrompt, UserImage, image_size }: { modifiedPrompt: string; UserImage: string[]; image_size?: string; }): Promise<any> {
-  const URL: string = process.env.NANO_BANANA_URL || "";
-  const Header = {
-    Authorization: `Bearer ${process.env.NANO_BANANA_SECRET}`,
-    "Content-Type": "application/json",
-  };
- 
-  const Body = {
-    prompt: modifiedPrompt,
-    type: "IMAGETOIAMGE",
-    numImages: 2,
-    callBackUrl: "https://your-callback-url.com/webhook",
-    imageUrls: UserImage,
-    watermark: "ThumbyPie",
-    imageSize: image_size || "16:9",
-  };
-
-    const taskId: aiGenRes = await axios.post(URL, Body, { headers: Header });
-    return taskId;
 }
 
 export async function fetchGeneratedImagesUrlMethod(

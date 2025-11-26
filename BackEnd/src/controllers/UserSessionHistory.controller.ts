@@ -50,10 +50,14 @@ export const DeleteSessionChat = async (
     if (!data) {
       throw new ApiError(400, "History data is required", "History data is required");
     }
+    if (!data.ImagePublicId || !data.AiImagePublicId) {
+      throw new ApiError(400, "History data is required", "History data is required");
+    }
     const deleteResult = await HistoryController.deleteOne({
       _id: data._id,
       userId: User._id,
     });
+    console.log("Delete Result:", deleteResult);
     if (deleteResult.deletedCount === 0) {
       throw new ApiError(404, "No History found to delete", "No History found to delete");
     }

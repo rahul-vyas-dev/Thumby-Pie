@@ -7,7 +7,8 @@ import { uploadBufferToCloudinary, UploadFile } from "../utils/Cloudinary";
 import dotenv from "dotenv";
 import { ModifiedPrompt, ModifiedPromptForEditImage } from "../secret";
 import fetchImageBuffer from "../utils/fetchBufferImage";
-import { AiGeneratedImageTaskId, fetchGeneratedImagesUrlMethod, } from "../utils/GenerateNewAiImage";
+import { fetchGeneratedImagesUrlMethod } from "../utils/GenerateNewAiImage";
+import axios from "axios";
 dotenv.config();
 
 interface aiGenRes {
@@ -45,7 +46,6 @@ export const CreateNewImage = async (
   res: Response<ApiResponse<History>>
 ) => {
   try {
-   
     const user = req?.user;
     if (!user) {
       throw new ApiError(401, "Not Authorized", "Not Authorized");
@@ -93,15 +93,27 @@ export const CreateNewImage = async (
     }
 
     const modifiedPrompt: string = ModifiedPrompt(prompt);
-  
+
     const AiGeneratedUploadedImagesUrl: string[] = [];
     const AiGeneratedUploadedImagesPublicId: string[] = [];
 
-    const taskId: aiGenRes = await AiGeneratedImageTaskId({
-      modifiedPrompt,
-      UserImage: imageUrl,
-      image_size,
-    });
+    const URL: string = process.env.NANO_BANANA_URL || "";
+    const Header = {
+      Authorization: `Bearer ${process.env.NANO_BANANA_SECRET}`,
+      "Content-Type": "application/json",
+    };
+
+    const Body = {
+      prompt: modifiedPrompt,
+      type: "IMAGETOIAMGE",
+      numImages: 2,
+      callBackUrl: "https://your-callback-url.com/webhook",
+      imageUrls: UserImage,
+      watermark: "ThumbyPie",
+      imageSize: image_size || "16:9",
+    };
+
+    const taskId: aiGenRes = await axios.post(URL, Body, { headers: Header });
     console.log("AI Generation Task ID:", taskId);
 
     if (taskId.data.code !== 200) {
@@ -116,7 +128,6 @@ export const CreateNewImage = async (
     const fetchGeneratedImagesUrl: aiGenImageRes = await fetchGeneratedImagesUrlMethod(taskIdValue);
 
     console.log("Fetched Generated Images:", fetchGeneratedImagesUrl.data);
-    console.log("Fetched Generated Images:", fetchGeneratedImagesUrl);
 
     if (fetchGeneratedImagesUrl.data.code !== 200) {
       throw new ApiError(
@@ -126,9 +137,7 @@ export const CreateNewImage = async (
       );
     }
 
-    const generatedImagesBuffer = await fetchImageBuffer(
-      fetchGeneratedImagesUrl.data.data.response.resultImageUrl
-    );
+    const generatedImagesBuffer = await fetchImageBuffer(fetchGeneratedImagesUrl.data.data.response.resultImageUrl);
     const uploaded = await uploadBufferToCloudinary(generatedImagesBuffer);
 
     console.log("Uploaded Generated Image to Cloudinary:", uploaded);
@@ -182,7 +191,7 @@ export const EditExistingImage = async (
     const prompt = req.body?.prompt;
     const _id = req.body?._id;
     const image_size = req.body?.image_size;
-    if (!sessionId || !prompt||!_id) {
+    if (!sessionId || !prompt || !_id) {
       throw new ApiError(400, "Session Id, Prompt, and ID are required");
     }
 
@@ -200,23 +209,25 @@ export const EditExistingImage = async (
 
     const modifiedPrompt: string = ModifiedPromptForEditImage(prompt);
 
-    const taskId: aiGenRes = await AiGeneratedImageTaskId({
-      modifiedPrompt,
-      UserImage,
-      image_size,
-    });
-    console.log("AI Generation Task ID:", taskId);
+    const URL: string = process.env.NANO_BANANA_URL || "";
+    const Header = {
+      Authorization: `Bearer ${process.env.NANO_BANANA_SECRET}`,
+      "Content-Type": "application/json",
+    };
 
-    if (taskId.data.code !== 200) {
-      throw new ApiError(
-        500,
-        "Error in AI image generation",
-        "Error in AI image generation"
-      );
-    }
+    const Body = {
+      prompt: modifiedPrompt,
+      type: "IMAGETOIAMGE",
+      numImages: 2,
+      callBackUrl: "https://your-callback-url.com/webhook",
+      imageUrls: UserImage,
+      watermark: "ThumbyPie",
+      imageSize: image_size || "16:9",
+    };
+
+    const taskId: aiGenRes = await axios.post(URL, Body, { headers: Header });
     const taskIdValue = taskId.data.data.taskId;
-    const fetchGeneratedImagesUrl: aiGenImageRes =
-      await fetchGeneratedImagesUrlMethod(taskIdValue);
+    const fetchGeneratedImagesUrl: aiGenImageRes = await fetchGeneratedImagesUrlMethod(taskIdValue);
 
     console.log("Fetched Generated Images:", fetchGeneratedImagesUrl.data);
     // console.log("Fetched Generated Images:", fetchGeneratedImagesUrl);
