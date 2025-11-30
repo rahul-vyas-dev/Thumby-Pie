@@ -1,14 +1,11 @@
-import "./App.css";
-import { Text } from "./components/3D/Text";
+import { ThemeProvider } from "@/components/ThemeProvider";
+import Header from "./components/Header";
 
 function App() {
-
   return (
-    <>
-      <div id="3D">
-        <Text />
-      </div>
-    </>
+    <ThemeProvider defaultTheme="dark" storageKey="vite-ui-theme">
+      <Header />
+    </ThemeProvider>
   );
 }
 
