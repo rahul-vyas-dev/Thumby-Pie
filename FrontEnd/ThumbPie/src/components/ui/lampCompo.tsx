@@ -23,7 +23,7 @@ const LampEffect = () => (
         }}
         className="bg-linear-to-br from-slate-300 to-slate-500 py-4 bg-clip-text text-center text-3xl font-semibold tracking-tight text-transparent md:text-7xl outline-1 rounded-3xl p-2.5 shadow-lg shadow-gray-600"
       >
-        <span className="flex mb-4 text-center">
+        <span className="flex mb-4 text-center place-content-center">
           <Quote fill="white" className="rotate-180"/> Art born from your ideas.{" "}
           <Quote fill="white" />
         </span>

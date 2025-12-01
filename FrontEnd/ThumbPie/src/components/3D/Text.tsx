@@ -13,8 +13,8 @@ import {
 } from "@react-three/drei";
 import { easing } from "maath";
 import "./utils";
-import image from "@/assets/images/img1.jpg";
-import image2 from "@/assets/images/work_.png";
+import { imageArray15 } from "@/assets/images/images";
+import imageWork from "@/assets/images/work_.png";
 import { motion } from "framer-motion";
 import { useTheme } from "../ThemeProvider";
 export const Text = () => {
@@ -87,7 +87,7 @@ useEffect(() => {
   return Array.from({ length: count }, (_, i) => (
     <Card
       key={i}
-      url={image}
+      url={imageArray15[i]}
       position={[
         Math.sin((i / count) * Math.PI * 2) * radius,
         0,
@@ -131,7 +131,7 @@ function Card({ url, ...props }) {
 
 function Banner(props: [number]) {
   const ref = useRef<Mesh>(null!);
-  const texture = useTexture(image2);
+  const texture = useTexture(imageWork);
   texture.wrapS = texture.wrapT = THREE.RepeatWrapping;
   const scroll = useScroll();
   useFrame((state, delta) => {

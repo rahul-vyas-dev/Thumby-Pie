@@ -14,10 +14,10 @@ export function ModeToggle() {
       size="icon"
       onClick={handleToggle}
       aria-label="Toggle Theme"
-      
+      className="hover:translate-x-0.5 hover:translate-y-0.5"
     >
       <Sun className="h-[1.2rem] w-[1.2rem] rotate-0 scale-100 transition-all dark:-rotate-90 dark:scale-0" />
-      <Moon className="absolute h-[1.2rem] w-[1.2rem] rotate-90 scale-0 transition-all dark:rotate-0 dark:scale-100 fill-black"/>
+      <Moon className="absolute h-[1.2rem] w-[1.2rem] rotate-90 scale-0 transition-all dark:rotate-0 dark:scale-100 fill-black" />
     </Button>
   );
 }
