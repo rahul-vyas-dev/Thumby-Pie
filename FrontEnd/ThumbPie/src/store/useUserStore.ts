@@ -11,10 +11,10 @@ interface UserState {
       email: string;
       createdAt: string;
       updatedAt: string;
-      __v: number;
+      __v?: number;
     }
   ];
-  statusCode: 200;
+  statusCode: number;
   accessToken: string;
 }
 
