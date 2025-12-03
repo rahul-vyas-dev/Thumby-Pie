@@ -11,7 +11,7 @@ import axios from "axios";
 const url = import.meta.env.VITE_BACKEND_URL;
 import { useForm } from "react-hook-form";
 import { type SubmitHandler } from "react-hook-form";
-
+import ATG from "@/assets/images/ATG.png";
 export function SidebarDemo() {
   const sessionObj = useSessionStore((state) => state.data);
   const clearSessionMethod = useSessionStore(
@@ -20,7 +20,9 @@ export function SidebarDemo() {
   const setSessionDataMethod = useSessionStore((state) => state.setData);
 
   const userObj = useUserStore((state) => state);
-  const [sessionLenght, setSessionLenght] = useState(sessionObj?.data.length as number);
+  const [sessionLenght, setSessionLenght] = useState(
+    sessionObj?.data.length as number
+  );
   const user = selectUserData(userObj);
   if (!sessionObj) {
     toast.error("No history found!!");
@@ -38,19 +40,19 @@ export function SidebarDemo() {
             await axios
               .delete(`${url}api/v1/sessions/delete-all-sessions`)
               .then((res) => {
-                console.log('this is res', res);
+                console.log("this is res", res);
                 toast(res.data.message);
               })
               .catch((error) => {
-                console.log('error', error);
+                console.log("error", error);
                 toast.error(error?.data?.message);
               });
           },
         },
       });
     } catch (error) {
-      toast(error as string)
-    } 
+      toast(error as string);
+    }
   };
   type inputs = {
     sessionName: string;
@@ -64,7 +66,7 @@ export function SidebarDemo() {
         sessionName: data.sessionName,
       })
       .then((res) => {
-        console.log('res success',res)
+        console.log("res success", res);
         setSessionDataMethod({
           success: true,
           message: "New session created successfully",
@@ -106,7 +108,10 @@ export function SidebarDemo() {
               {open ? (
                 <Button>
                   {isInput ? (
-                    <form onSubmit={handleSubmit(handleCreateNewSession)}className="flex gap-2">
+                    <form
+                      onSubmit={handleSubmit(handleCreateNewSession)}
+                      className="flex gap-2"
+                    >
                       <input
                         defaultValue={`Untitled Session ${sessionLenght}`}
                         {...register("sessionName")}
@@ -160,13 +165,16 @@ export const Logo = () => {
       href="#"
       className="relative z-20 flex items-center space-x-2 py-1 text-sm font-normal text-black"
     >
-      <div className="h-5 w-6 shrink-0 rounded-tl-lg rounded-tr-sm rounded-br-lg rounded-bl-sm bg-black dark:bg-white" />
+      <img
+        src={ATG}
+        className="h-6 w-7 shrink-0 rounded-tl-lg rounded-tr-sm rounded-br-lg rounded-bl-sm bg-black dark:bg-white"
+      />
       <motion.span
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
-        className="font-medium whitespace-pre text-black dark:text-white"
+        className="font-extrabold whitespace-pre text-black dark:text-white"
       >
-        Acet Labs
+        Ai Thumbnail Generator{" "}
       </motion.span>
     </a>
   );
@@ -177,7 +185,10 @@ export const LogoIcon = () => {
       href="#"
       className="relative z-20 flex items-center space-x-2 py-1 text-sm font-normal text-black"
     >
-      <div className="h-5 w-6 shrink-0 rounded-tl-lg rounded-tr-sm rounded-br-lg rounded-bl-sm bg-black dark:bg-white" />
+      <img
+        src={ATG}
+        className="h-6 w-7 shrink-0 rounded-tl-lg rounded-tr-sm rounded-br-lg rounded-bl-sm bg-black dark:bg-white"
+      />
     </a>
   );
 };

@@ -18,11 +18,12 @@ interface sessionStore {
   setData: (data: sessionState) => void;
   deleteSession: (id: string) => void;
   clearSessionHistory: () => void;
+  EditSessionTitle: (sessionId: string, sessionName: string) => void;
 }
 
 export const useSessionStore = create<sessionStore>((set) => ({
   data: {
-    success:true,
+    success: true,
     data: [
       {
         sessionId: "string",
@@ -30,24 +31,24 @@ export const useSessionStore = create<sessionStore>((set) => ({
         sessionName: "stringg1",
         createdAt: "32:32:2",
         lastUpdated: "Date",
-    },
+      },
       {
         sessionId: "string2",
         userId: "string",
         sessionName: "string2",
         createdAt: "32:32:2",
         lastUpdated: "Date",
-    },
+      },
       {
         sessionId: "string3",
         userId: "string",
         sessionName: "string3",
         createdAt: "32:32:2",
         lastUpdated: "Date",
-    }
+      },
     ],
     message: "no data dound",
-    statusCode:401
+    statusCode: 401,
   },
   setData: (data: sessionState) =>
     set((state) => {
@@ -74,4 +75,18 @@ export const useSessionStore = create<sessionStore>((set) => ({
       };
     }),
   clearSessionHistory: () => set({ data: null }),
+  EditSessionTitle: (sessionId: string, sessionName: string) =>
+    set((state) => {
+      if (!state.data) return state;
+      const updatedData = state.data?.data.map((obj) =>
+        obj.sessionId == sessionId ? { ...obj, sessionName } : obj
+      );
+
+      return {
+        data: {
+          ...state.data,
+          data: updatedData,
+        },
+      };
+    }),
 }));

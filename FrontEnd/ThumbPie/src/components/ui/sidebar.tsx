@@ -3,9 +3,18 @@ import { cn } from "@/lib/utils";
 import React, { useState, createContext, useContext } from "react";
 import { AnimatePresence, motion } from "motion/react";
 import { IconMenu2, IconX } from "@tabler/icons-react";
-import { Button } from "./Button";
-import { MessageCircle } from "lucide-react";
-
+import {
+  Delete,
+  MessageCircle,
+  Pencil,
+  SendHorizonal,
+  Trash2,
+} from "lucide-react";
+import { toast } from "sonner";
+import axios from "axios";
+import { useSessionStore } from "@/store/useSessionStore";
+import { useForm, type SubmitHandler } from "react-hook-form";
+const url = import.meta.env.VITE_BACKEND_URL;
 interface sessionObj {
   sessionId: string;
   userId: string;
@@ -97,7 +106,7 @@ export const DesktopSidebar = ({
           className
         )}
         animate={{
-          width: animate ? (open ? "300px" : "60px") : "300px",
+          width: animate ? (open ? "300px" : "65px") : "300px",
         }}
         onMouseEnter={() => setOpen(true)}
         onMouseLeave={() => setOpen(false)}
@@ -167,25 +176,139 @@ export const SidebarLink = ({
   sessionObj?: sessionObj;
   className?: string;
 }) => {
+  const deleteSingleSessionFromSessionStore = useSessionStore(
+    (state) => state.deleteSession
+  );
+  const editSingleSessionFromSessionStore = useSessionStore(
+    (state) => state.EditSessionTitle
+  );
   const { open, animate } = useSidebar();
+  const [isInput, setIsInput] = useState(false);
+  type inputeType = {
+    sessionName: string;
+  };
+  const { register, handleSubmit } = useForm<inputeType>();
+  const handleSingleSessionDelete = async () => {
+      toast.warning("This action is irreversible. Are you sure to delete", {
+        action: {
+          label: "Sure",
+          onClick: async () => {
+            await axios
+              .delete(`${url}api/v1/sessions/delete-single-session`, {
+                data: { sessionId: sessionObj?.sessionId },
+              })
+              .then((res) => {
+                if (res.data.statusCode == 200) {
+                  deleteSingleSessionFromSessionStore(sessionObj!.sessionId);
+                }
+                toast(res.data.message);
+              })
+              .catch((error) => {
+                console.log("error from deleting single session", error);
+                toast(error.response.data.message);
+              });
+          },
+        },
+      });
+   
+  };
+
+  const handleEditSessionTitleMethod: SubmitHandler<inputeType> = async (
+    data
+  ) => {
+    await axios
+      .put(`${url}api/v1/sessions/edit-session-title`, {
+        sessionName: data.sessionName,
+        sessionId: sessionObj?.sessionId,
+      })
+      .then((res) => {
+        if (res.data.statusCode == 200) {
+          editSingleSessionFromSessionStore(
+            sessionObj!.sessionId,
+            data.sessionName
+          );
+        }
+        toast(res.data.message);
+      })
+      .catch((error) => {
+        toast.error(error.response.data.message);
+      })
+      .finally(() => setIsInput(false));
+  };
   return (
-    <Button
+    <main
       className={cn(
-        "flex items-center justify-start gap-2 bg-white group/sidebar py-2 dark:bg-black hover:bg-white dark:hover:bg-black",
+        "flex items-center justify-between bg-white group/sidebar dark:bg-black hover:bg-white dark:hover:bg-black p-1.5 rounded-2xl",
         className
       )}
       {...props}
     >
-      <MessageCircle className="text-black dark:text-white" />
-      <motion.span
-        animate={{
-          display: animate ? (open ? "inline-block" : "none") : "inline-block",
-          opacity: animate ? (open ? 1 : 0) : 1,
-        }}
-        className="text-neutral-700 dark:text-neutral-200 text-sm group-hover/sidebar:translate-x-1 transition duration-150 whitespace-pre inline-block p-0! m-0!"
+      <form
+        onSubmit={handleSubmit(handleEditSessionTitleMethod)}
+        className="flex justify-between w-full group/sidebar"
       >
-        {sessionObj?.sessionName}
-      </motion.span>
-    </Button>
+        <div className="flex gap-2 items-center">
+          <MessageCircle className="text-black dark:text-white" />
+          {isInput ? (
+            <motion.input
+              defaultValue={sessionObj?.sessionName}
+              animate={{
+                display: animate
+                  ? open
+                    ? "inline-block"
+                    : "none"
+                  : "inline-block",
+                opacity: animate ? (open ? 1 : 0) : 1,
+              }}
+              className="text-neutral-700 dark:text-neutral-200 text-sm group-hover/sidebar:translate-x-1 transition duration-150 whitespace-pre inline-block m-0! w-[10em] overflow-clip outline-1 rounded-2xl p-3"
+              {...register("sessionName")}
+            ></motion.input>
+          ) : (
+            <motion.span
+              animate={{
+                display: animate
+                  ? open
+                    ? "inline-block"
+                    : "none"
+                  : "inline-block",
+                opacity: animate ? (open ? 1 : 0) : 1,
+              }}
+              className="text-neutral-700 dark:text-neutral-200 text-sm group-hover/sidebar:translate-x-1 transition duration-150 whitespace-pre inline-block p-0! m-0!"
+            >
+              <b>{sessionObj?.sessionName}</b>
+            </motion.span>
+          )}
+        </div>
+        <div className="flex items-center bg gap-1">
+          <span className=" bg-white dark:bg-black hover:bg-gray-200 dark:hover:bg-gray-800 p-1.5 rounded-2xl">
+            {isInput ? (
+              <SendHorizonal
+                onClick={handleSubmit(handleEditSessionTitleMethod)}
+              />
+            ) : (
+              <Pencil
+                className="text-black dark:text-white"
+                onClick={() => setIsInput(true)}
+              />
+            )}
+          </span>
+          <span className=" bg-white dark:bg-black hover:bg-gray-200 dark:hover:bg-gray-800 p-1.5 rounded-2xl">
+            {isInput ? (
+              <Delete
+                onClick={(e) => {
+                  e.stopPropagation();
+                  setIsInput(false);
+                }}
+              />
+            ) : (
+              <Trash2
+                className="text-black dark:text-white"
+                onClick={handleSingleSessionDelete}
+              />
+            )}
+          </span>
+        </div>
+      </form>
+    </main>
   );
 };
