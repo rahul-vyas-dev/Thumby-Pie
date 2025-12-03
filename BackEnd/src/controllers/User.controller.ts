@@ -50,7 +50,7 @@ export const SignUp = async (
       .cookie("accessToken", token, {
         httpOnly: true, // JS cannot access it
         secure: process.env.NODE_ENV === "production", // only over HTTPS
-        sameSite: "strict",
+        // sameSite: "strict",
         maxAge: 60 * 60 * 1000, // 1 hour
       })
       .json({
@@ -109,7 +109,7 @@ export const SignIn = async (
       .cookie("accessToken", token, {
         httpOnly: true, // JS cannot access it
         secure: process.env.NODE_ENV === "production", // only over HTTPS
-        sameSite: "strict",
+        sameSite: "none",
         maxAge: 60 * 60 * 1000, // 1 hour
       })
       .json({
