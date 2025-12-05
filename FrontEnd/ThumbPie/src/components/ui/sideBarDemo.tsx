@@ -8,10 +8,14 @@ import { SendHorizonal, SquarePen, Trash2 } from "lucide-react";
 import { Button } from "./Button";
 import { selectUserData, useUserStore } from "@/store/useUserStore";
 import axios from "axios";
-const url = import.meta.env.VITE_BACKEND_URL;
 import { useForm } from "react-hook-form";
 import { type SubmitHandler } from "react-hook-form";
 import ATG from "@/assets/images/ATG.png";
+import { useHistoryStore } from "@/store/useHistoryStore";
+import { Dashboard } from "./Dashboard";
+
+const url = import.meta.env.VITE_BACKEND_URL;
+
 export function SidebarDemo() {
   const sessionObj = useSessionStore((state) => state.data);
   const clearSessionMethod = useSessionStore(
@@ -36,16 +40,16 @@ export function SidebarDemo() {
         action: {
           label: "Sure",
           onClick: async () => {
-            clearSessionMethod();
             await axios
               .delete(`${url}api/v1/sessions/delete-all-sessions`)
               .then((res) => {
+                clearSessionMethod();
                 console.log("this is res", res);
                 toast(res.data.message);
               })
               .catch((error) => {
                 console.log("error", error);
-                toast.error(error?.data?.message);
+                toast.error(error?.response?.data?.message);
               });
           },
         },
@@ -58,6 +62,7 @@ export function SidebarDemo() {
     sessionName: string;
   };
   const { register, handleSubmit } = useForm<inputs>();
+  
   const handleCreateNewSession: SubmitHandler<inputs> = async (data) => {
     const sessionId = crypto.randomUUID();
     await axios
@@ -92,12 +97,27 @@ export function SidebarDemo() {
         setIsInput(false);
       });
   };
+  const setSessionHistoryData = useHistoryStore((state) => state.SetHistory);
+
+  const handleLoadSingleSessionHistory = async (sessionId: string) => {
+    await axios
+      .post(`${url}api/v1/session-history/getSessionHistory`, {
+        sessionId,
+      })
+      .then((res) => {
+        toast(res?.data?.message);
+        setSessionHistoryData(res.data);
+      })
+      .catch((error) => {
+        console.log(error)
+        toast(error?.response?.data?.message);
+      });
+  };
 
   return (
     <div
       className={cn(
         "mx-auto flex w-full flex-1 flex-col overflow-hidden rounded-md border border-neutral-200 bg-gray-100 md:flex-row dark:border-neutral-700 dark:bg-neutral-800",
-        "h-screen"
       )}
     >
       <Sidebar open={open} setOpen={setOpen}>
@@ -148,6 +168,9 @@ export function SidebarDemo() {
                 <SidebarLink
                   key={sessionObj.sessionId}
                   sessionObj={sessionObj}
+                  onClick={() => {
+                    handleLoadSingleSessionHistory(sessionObj.sessionId);
+                  }}
                 />
               ))}
             </div>
@@ -190,30 +213,5 @@ export const LogoIcon = () => {
         className="h-6 w-7 shrink-0 rounded-tl-lg rounded-tr-sm rounded-br-lg rounded-bl-sm bg-black dark:bg-white"
       />
     </a>
-  );
-};
-
-const Dashboard = () => {
-  return (
-    <div className="flex flex-1">
-      <div className="flex h-full w-full flex-1 flex-col gap-2 rounded-tl-2xl border border-neutral-200 bg-white p-2 md:p-10 dark:border-neutral-700 dark:bg-neutral-900">
-        <div className="flex gap-2">
-          {[...new Array(4)].map((i, idx) => (
-            <div
-              key={"first-array-demo-1" + idx}
-              className="h-20 w-full animate-pulse rounded-lg bg-gray-100 dark:bg-neutral-800"
-            ></div>
-          ))}
-        </div>
-        <div className="flex flex-1 gap-2">
-          {[...new Array(2)].map((i, idx) => (
-            <div
-              key={"second-array-demo-1" + idx}
-              className="h-full w-full animate-pulse rounded-lg bg-gray-100 dark:bg-neutral-800"
-            ></div>
-          ))}
-        </div>
-      </div>
-    </div>
   );
 };

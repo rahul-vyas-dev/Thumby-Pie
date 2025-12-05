@@ -1,7 +1,7 @@
 "use client";
 import { cn } from "@/lib/utils";
 import React, { useState, createContext, useContext } from "react";
-import { AnimatePresence, motion } from "motion/react";
+import { AnimatePresence, motion, type HTMLMotionProps } from "motion/react";
 import { IconMenu2, IconX } from "@tabler/icons-react";
 import {
   Delete,
@@ -102,7 +102,7 @@ export const DesktopSidebar = ({
     <>
       <motion.div
         className={cn(
-          "h-full px-4 py-4 hidden  md:flex md:flex-col bg-neutral-100 dark:bg-neutral-800 w-[300px] shrink-0",
+          "h-[-webkit-fill-available] px-3.5 py-4 hidden  md:flex md:flex-col bg-neutral-100 dark:bg-neutral-800 w-[300px] shrink-0 z-10 border",
           className
         )}
         animate={{
@@ -128,7 +128,7 @@ export const MobileSidebar = ({
     <>
       <div
         className={cn(
-          "h-10 px-4 py-4 flex flex-row md:hidden  items-center justify-between bg-neutral-100 dark:bg-neutral-800 w-full"
+          "h-10 px-3.5 py-4 flex flex-row md:hidden  items-center justify-between bg-neutral-100 dark:bg-neutral-800 w-full z-10 border"
         )}
         {...props}
       >
@@ -172,7 +172,7 @@ export const SidebarLink = ({
   sessionObj,
   className,
   ...props
-}: {
+}: HTMLMotionProps<"main"> & {
   sessionObj?: sessionObj;
   className?: string;
 }) => {
@@ -189,28 +189,27 @@ export const SidebarLink = ({
   };
   const { register, handleSubmit } = useForm<inputeType>();
   const handleSingleSessionDelete = async () => {
-      toast.warning("This action is irreversible. Are you sure to delete", {
-        action: {
-          label: "Sure",
-          onClick: async () => {
-            await axios
-              .delete(`${url}api/v1/sessions/delete-single-session`, {
-                data: { sessionId: sessionObj?.sessionId },
-              })
-              .then((res) => {
-                if (res.data.statusCode == 200) {
-                  deleteSingleSessionFromSessionStore(sessionObj!.sessionId);
-                }
-                toast(res.data.message);
-              })
-              .catch((error) => {
-                console.log("error from deleting single session", error);
-                toast(error.response.data.message);
-              });
-          },
+    toast.warning("This action is irreversible. Are you sure to delete", {
+      action: {
+        label: "Sure",
+        onClick: async () => {
+          await axios
+            .delete(`${url}api/v1/sessions/delete-single-session`, {
+              data: { sessionId: sessionObj?.sessionId },
+            })
+            .then((res) => {
+              if (res.data.statusCode == 200) {
+                deleteSingleSessionFromSessionStore(sessionObj!.sessionId);
+              }
+              toast(res.data.message);
+            })
+            .catch((error) => {
+              console.log("error from deleting single session", error);
+              toast(error?.response?.data.message);
+            });
         },
-      });
-   
+      },
+    });
   };
 
   const handleEditSessionTitleMethod: SubmitHandler<inputeType> = async (
@@ -236,12 +235,24 @@ export const SidebarLink = ({
       .finally(() => setIsInput(false));
   };
   return (
-    <main
+    <motion.main
       className={cn(
         "flex items-center justify-between bg-white group/sidebar dark:bg-black hover:bg-white dark:hover:bg-black p-1.5 rounded-2xl",
         className
       )}
       {...props}
+      initial={{ opacity: 0.9, y: 200 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      transition={{
+        delay: 0.3,
+        duration: 0.3,
+        ease: "easeInOut",
+      }}
+      viewport={{once:true}}
+      whileHover={{
+        opacity: 0.4,
+        transition: { delay: 0, duration: 0 },
+      }}
     >
       <form
         onSubmit={handleSubmit(handleEditSessionTitleMethod)}
@@ -283,7 +294,10 @@ export const SidebarLink = ({
           <span className=" bg-white dark:bg-black hover:bg-gray-200 dark:hover:bg-gray-800 p-1.5 rounded-2xl">
             {isInput ? (
               <SendHorizonal
-                onClick={handleSubmit(handleEditSessionTitleMethod)}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  handleSubmit(handleEditSessionTitleMethod)();
+                }}
               />
             ) : (
               <Pencil
@@ -303,12 +317,15 @@ export const SidebarLink = ({
             ) : (
               <Trash2
                 className="text-black dark:text-white"
-                onClick={handleSingleSessionDelete}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  handleSingleSessionDelete();
+                }}
               />
             )}
           </span>
         </div>
       </form>
-    </main>
+    </motion.main>
   );
 };
