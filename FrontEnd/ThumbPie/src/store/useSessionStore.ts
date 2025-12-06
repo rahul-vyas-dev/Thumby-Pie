@@ -1,6 +1,6 @@
 import { create } from "zustand";
 
-interface sessionState {
+export interface sessionState {
   success: boolean;
   message: string;
   data: {

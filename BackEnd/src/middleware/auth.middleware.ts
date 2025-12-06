@@ -32,6 +32,7 @@ export const VerifyJWT = async (req: Request, res: Response, next: NextFunction)
     req.user = user;
     next();
   } catch (error) {
+    console.log("error in JWT auth", error);
       throw new ApiError(401, "Not authorized, token failed", error);
   }
 };

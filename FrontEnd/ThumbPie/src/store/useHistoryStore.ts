@@ -25,47 +25,7 @@ interface historyStore {
 }
 
 export const useHistoryStore = create<historyStore>((set) => ({
-  data: {
-    success: true,
-    message: "successfully fetched",
-    data: [
-      {
-        _id: "string1",
-        userId: "string",
-        sessionId: "string;",
-        imageUrl: [
-          "https://tse1.mm.bing.net/th/id/OIP.eZwMo1VS01cGzkiLG0IPeQHaEK?cb=ucfimg2&ucfimg=1&rs=1&pid=ImgDetMain&o=7&rm=3",
-          "https://tse1.mm.bing.net/th/id/OIP.eZwMo1VS01cGzkiLG0IPeQHaEK?cb=ucfimg2&ucfimg=1&rs=1&pid=ImgDetMain&o=7&rm=3",
-        ],
-        GeneratedImageUrl: [
-          "https://tse1.mm.bing.net/th/id/OIP.eZwMo1VS01cGzkiLG0IPeQHaEK?cb=ucfimg2&ucfimg=1&rs=1&pid=ImgDetMain&o=7&rm=3",
-          "https://tse1.mm.bing.net/th/id/OIP.eZwMo1VS01cGzkiLG0IPeQHaEK?cb=ucfimg2&ucfimg=1&rs=1&pid=ImgDetMain&o=7&rm=3",
-        ],
-        prompt: "string",
-        ImagePublicId: [""],
-        AiImagePublicId: [""],
-        createdAt: new Date(Date.now()),
-      },
-      {
-        _id: "strindsg1",
-        userId: "string",
-        sessionId: "string;",
-        imageUrl: [
-          "https://tse1.mm.bing.net/th/id/OIP.eZwMo1VS01cGzkiLG0IPeQHaEK?cb=ucfimg2&ucfimg=1&rs=1&pid=ImgDetMain&o=7&rm=3",
-          "https://tse1.mm.bing.net/th/id/OIP.eZwMo1VS01cGzkiLG0IPeQHaEK?cb=ucfimg2&ucfimg=1&rs=1&pid=ImgDetMain&o=7&rm=3",
-        ],
-        GeneratedImageUrl: [
-          "https://tse1.mm.bing.net/th/id/OIP.eZwMo1VS01cGzkiLG0IPeQHaEK?cb=ucfimg2&ucfimg=1&rs=1&pid=ImgDetMain&o=7&rm=3",
-          "https://tse1.mm.bing.net/th/id/OIP.eZwMo1VS01cGzkiLG0IPeQHaEK?cb=ucfimg2&ucfimg=1&rs=1&pid=ImgDetMain&o=7&rm=3",
-        ],
-        prompt: "string",
-        ImagePublicId: [""],
-        AiImagePublicId: [""],
-        createdAt: new Date(Date.now()),
-      },
-    ],
-    statusCode: 200,
-  },
+  data:null,
   SetHistory: (data: sessionState) => set({ data }),
   EditHistory: (data: sessionState) =>
     set((state) => {

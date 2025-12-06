@@ -97,6 +97,7 @@ export function SidebarDemo() {
         setIsInput(false);
       });
   };
+  
   const setSessionHistoryData = useHistoryStore((state) => state.SetHistory);
 
   const handleLoadSingleSessionHistory = async (sessionId: string) => {

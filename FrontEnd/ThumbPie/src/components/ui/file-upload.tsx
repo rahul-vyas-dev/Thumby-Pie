@@ -1,8 +1,9 @@
 import { cn } from "@/lib/utils";
-import React, { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { motion } from "motion/react";
 import { IconUpload } from "@tabler/icons-react";
 import { useDropzone } from "react-dropzone";
+import { CircleX } from "lucide-react";
 
 const mainVariant = {
   initial: {
@@ -18,17 +19,22 @@ const mainVariant = {
 
 export const FileUpload = ({
   onChange,
+  defaultValues,
 }: {
-  onChange?: (files: File[]) => void;
+  onChange: (files: File[]) => void;
+  defaultValues: boolean;
 }) => {
   const [files, setFiles] = useState<File[]>([]);
   const fileInputRef = useRef<HTMLInputElement>(null);
-  console.log('files from hanle', files);
   const handleFileChange = (newFiles: File[]) => {
-    setFiles((prevFiles) => [...prevFiles, ...newFiles]);
-    // eslint-disable-next-line @typescript-eslint/no-unused-expressions
-    onChange && onChange(newFiles);
+    const updatedFiles = [...files, ...newFiles];
+    setFiles(updatedFiles);
+    onChange(updatedFiles);
   };
+  useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    setFiles([]);
+  }, [defaultValues]);
 
   const handleClick = () => {
     fileInputRef.current?.click();
@@ -58,7 +64,16 @@ export const FileUpload = ({
           name="UserImage"
         />
         <div className="flex flex-col items-center justify-center">
-          <div className="relative w-fit max-w-xl mx-auto">
+          <div className="relative w-fit max-w-xl mx-auto p-1">
+            {files.length > 0 && (
+              <CircleX
+                className="absolute top-0 left-0 "
+                onClick={(e) => {
+                  e.stopPropagation();
+                  setFiles([]);
+                }}
+              />
+            )}
             {files.length > 0 &&
               files.map((file, idx) => (
                 <motion.div
@@ -69,7 +84,7 @@ export const FileUpload = ({
                     "shadow-sm"
                   )}
                 >
-                  <div className="flex w-fit items-center gap-4">
+                  <div className="flex w-40 items-center gap-4 text-ellipsis whitespace-nowrap ">
                     <img
                       src={URL.createObjectURL(file)}
                       alt={file.name}
