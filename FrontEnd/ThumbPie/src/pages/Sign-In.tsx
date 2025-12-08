@@ -1,10 +1,11 @@
 import { Button } from "@/components/ui/Button";
 import { SparklesCore } from "@/components/ui/sparkles";
+import { useUserStore } from "@/store/useUserStore";
 import axios from "axios";
 import { Eye, EyeOff } from "lucide-react";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { useForm, type SubmitHandler } from "react-hook-form";
-import { NavLink } from "react-router-dom";
+import { NavLink, useNavigate } from "react-router-dom";
 import { toast } from "sonner";
 const url = import.meta.env.VITE_BACKEND_URL;
 
@@ -15,29 +16,35 @@ interface signInValue {
 
 function SignIn() {
   const [isPassword, setIsPassword] = useState(true);
-
-  const {
-    handleSubmit,
-    register,
-    formState: { errors },
-    reset,
-  } = useForm<signInValue>({
+  const setUser = useUserStore((state) => state.setUser);
+  const navigate = useNavigate();
+  const { handleSubmit, register, reset } = useForm<signInValue>({
     defaultValues: {
       email: "",
       password: "",
     },
   });
 
-  useEffect(() => {
-    if (errors.email || errors.password) {
-      toast.error(errors.email?.message);
-      toast.error(errors.password?.message);
-    }
-  }, [errors.email, errors.password]);
-
-  const handleSignInsubmit: SubmitHandler<signInValue> =async (data) => {
-    const response = await axios.post('');
-
+  const handleSignInsubmit: SubmitHandler<signInValue> = async (data) => {
+    axios
+      .post(
+        `${url}api/v1/auth/signin`,
+        {
+          email: data.email,
+          password: data.password,
+        },
+        { withCredentials: true }
+      )
+      .then((res) => {
+        console.log(res);
+        toast(res?.data?.message);
+        setUser(res.data);
+        reset();
+        navigate('/dashboard');
+      })
+      .catch((error) => {
+        toast.error(error.response.data.message);
+      });
   };
 
   return (
@@ -83,13 +90,7 @@ function SignIn() {
               type="email"
               placeholder="Enter email"
               autoComplete="off"
-              {...register("email", {
-                required: true,
-                pattern: {
-                  value: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
-                  message: "Enter a valid Email",
-                },
-              })}
+              {...register("email")}
               className="bg-transparent border border-white/30 rounded-md px-3 py-2 focus:border-white transition text-white"
             />
           </div>
@@ -111,18 +112,7 @@ function SignIn() {
                 type={isPassword ? "password" : "text"}
                 placeholder="Enter password"
                 autoComplete="new-password"
-                {...register("password", {
-                  required: true,
-                  minLength: {
-                    value: 6,
-                    message: "Password must be at least 6 characters",
-                  },
-                  pattern: {
-                    value: /^(?=.*[A-Z]).+$/,
-                    message:
-                      "Password must contain at least one uppercase letter",
-                  },
-                })}
+                {...register("password")}
                 className="outline-none focus:outline-none focus:ring-0 
     focus:border-transparent 
     border-none "
@@ -193,3 +183,23 @@ function SignIn() {
 }
 
 export default SignIn;
+// , {
+//                   required: true,
+//                   minLength: {
+//                     value: 6,
+//                     message: "Password must be at least 6 characters",
+//                   },
+//                   pattern: {
+//                     value: /^(?=.*[A-Z]).+$/,
+//                     message:
+//                       "Password must contain at least one uppercase letter",
+//                   },
+//                 }
+
+// , {
+//                 required: true,
+//                 pattern: {
+//                   value: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
+//                   message: "Enter a valid Email",
+//                 },
+//               }

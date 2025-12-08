@@ -236,6 +236,15 @@
 .appear span:nth-child(18) {
   animation-delay: 1.8s;
 }
+.appear span:nth-child(19) {
+  animation-delay: 1.9s;
+}
+.appear span:nth-child(20) {
+  animation-delay: 2s;
+}
+.appear span:nth-child(21) {
+  animation-delay: 2.1s;
+}
 
 @keyframes appear {
   0% {

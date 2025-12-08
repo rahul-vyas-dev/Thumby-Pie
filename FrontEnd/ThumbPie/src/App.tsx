@@ -9,6 +9,7 @@ import Upload from "./pages/Upload";
 import { Toaster } from "./components/ui/sonner";
 import CodeVerification from "./pages/CodeVerification";
 import SignIn from "./pages/Sign-In";
+import SignUp from "./pages/Sign-Up";
 function App() {
   return (
     <ThemeProvider defaultTheme="dark" storageKey="vite-ui-theme">
@@ -19,8 +20,8 @@ function App() {
       {/* <Upload/> */}
       
       {/* <Footer /> */}
-      {/* <CodeVerification/> */}
-      <SignIn/>
+      <CodeVerification/>
+      {/* <SignUp/> */}
     </ThemeProvider>
   );
 }

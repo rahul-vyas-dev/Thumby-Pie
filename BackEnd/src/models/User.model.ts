@@ -21,7 +21,7 @@ const Userschema: Schema<User> = new Schema(
     verifyCode: String,
     verifyCodeExpiry: {
       type: Date,
-      default: Date.now(),
+      default: () => Date.now() + 10 * 60 * 10000,
     },
     createdAt: { type: Date, default: Date.now() },
   },
@@ -40,13 +40,23 @@ Userschema.methods.isPasswordCorrect = async function (password: string) {
 };
 
 Userschema.methods.isVerifyCodeExpired = async function () {
-  console.log('code expiry time:', this.verifyCodeExpiry, 'current time:', new Date(Date.now()));
+  console.log(
+    "code expiry time:",
+    this.verifyCodeExpiry,
+    "current time:",
+    new Date(Date.now())
+  );
   const currentTime = new Date(Date.now());
   return this.verifyCodeExpiry > currentTime;
 };
 
 Userschema.methods.generateAuthToken = async function () {
-  console.log("Generating auth token for user:", this._id, this.email, this.name);
+  console.log(
+    "Generating auth token for user:",
+    this._id,
+    this.email,
+    this.name
+  );
   const token = await jwt.sign(
     {
       _id: this._id,

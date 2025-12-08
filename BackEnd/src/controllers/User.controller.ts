@@ -85,6 +85,7 @@ export const SignIn = async (
     const email = req.body?.email;
     const password = req.body?.password;
 
+    console.log("email", email, 'password', password);
     if (!email || !password)
       throw new ApiError(
         401,
@@ -110,7 +111,7 @@ export const SignIn = async (
         httpOnly: true, // JS cannot access it
         secure: process.env.NODE_ENV === "production", // only over HTTPS
         sameSite: "none",
-        maxAge: 60 * 60 * 1000, // 1 hour
+        maxAge: 60 * 60 * 10000, // 1 hour
       })
       .json({
         success: true,
@@ -144,7 +145,7 @@ export const verifyCode = async (
       throw new ApiError(401, "not a valid Email", "not a valid Email");
     if (user.verifyCode !== verifyCode)
       throw new ApiError(401, "Invalid verify code", "Invalid verify code");
-    const IsCodeNotExpired = user.isVerifyCodeExpired();
+    const IsCodeNotExpired =await user.isVerifyCodeExpired();
     console.log(IsCodeNotExpired);
     if (!IsCodeNotExpired)
       throw new ApiError(
