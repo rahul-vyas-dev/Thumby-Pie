@@ -11,7 +11,7 @@ import {
 
 export function CarouselDemo() {
   return (
-    <main className="w-full flex justify-center items-center">
+    <main className="w-full flex justify-center items-center mt-14 mb-20">
       <Carousel className="w-full max-w-xs flex justify-center items-center">
         <CarouselContent>
           {pricingPlans.map((plan, index) => (

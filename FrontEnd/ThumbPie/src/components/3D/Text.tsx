@@ -28,7 +28,7 @@ export const Text = () => {
         duration: 0.3,
         ease: "easeInOut",
       }}
-      className="h-[50vh]"
+      className="h-[70vh] rounded-3xl"
     >
       <Canvas camera={{ position: [0, 0, 100], fov: 15 }}>
         <fog attach="fog" args={["#a79", 8.5, 12]} />

@@ -22,34 +22,7 @@ interface sessionStore {
 }
 
 export const useSessionStore = create<sessionStore>((set) => ({
-  data: {
-    success: true,
-    data: [
-      {
-        sessionId: "string",
-        userId: "string",
-        sessionName: "stringg1",
-        createdAt: "32:32:2",
-        lastUpdated: "Date",
-      },
-      {
-        sessionId: "string2",
-        userId: "string",
-        sessionName: "string2",
-        createdAt: "32:32:2",
-        lastUpdated: "Date",
-      },
-      {
-        sessionId: "string3",
-        userId: "string",
-        sessionName: "string3",
-        createdAt: "32:32:2",
-        lastUpdated: "Date",
-      },
-    ],
-    message: "no data dound",
-    statusCode: 401,
-  },
+  data: null,
   setData: (data: sessionState) =>
     set((state) => {
       if (!state.data) return state;

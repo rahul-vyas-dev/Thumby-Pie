@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Sidebar, SidebarBody, SidebarLink } from "../ui/sidebar";
 import { motion } from "motion/react";
 import { cn } from "@/lib/utils";
@@ -13,6 +13,7 @@ import { type SubmitHandler } from "react-hook-form";
 import ATG from "@/assets/images/ATG.png";
 import { useHistoryStore } from "@/store/useHistoryStore";
 import { Dashboard } from "./Dashboard";
+import { NavLink } from "react-router-dom";
 
 const url = import.meta.env.VITE_BACKEND_URL;
 
@@ -28,10 +29,14 @@ export function SidebarDemo() {
     sessionObj?.data.length as number
   );
   const user = selectUserData(userObj);
-  if (!sessionObj) {
-    toast.error("No history found!!");
-    // console.log("");
-  }
+
+  useEffect(() => {
+    if (!sessionObj) {
+      toast.error("No history found!!");
+      // console.log("");
+    }
+  }, [sessionObj]);
+  
   const [open, setOpen] = useState(false);
   const [isInput, setIsInput] = useState(false);
   const handleClearSessionHistory = async () => {
@@ -62,7 +67,7 @@ export function SidebarDemo() {
     sessionName: string;
   };
   const { register, handleSubmit } = useForm<inputs>();
-  
+
   const handleCreateNewSession: SubmitHandler<inputs> = async (data) => {
     const sessionId = crypto.randomUUID();
     await axios
@@ -97,7 +102,7 @@ export function SidebarDemo() {
         setIsInput(false);
       });
   };
-  
+
   const setSessionHistoryData = useHistoryStore((state) => state.SetHistory);
 
   const handleLoadSingleSessionHistory = async (sessionId: string) => {
@@ -110,7 +115,7 @@ export function SidebarDemo() {
         setSessionHistoryData(res.data);
       })
       .catch((error) => {
-        console.log(error)
+        console.log(error);
         toast(error?.response?.data?.message);
       });
   };
@@ -118,7 +123,7 @@ export function SidebarDemo() {
   return (
     <div
       className={cn(
-        "mx-auto flex w-full flex-1 flex-col overflow-hidden rounded-md border border-neutral-200 bg-gray-100 md:flex-row dark:border-neutral-700 dark:bg-neutral-800",
+        "mx-auto flex w-full flex-1 flex-col overflow-hidden rounded-md border border-neutral-200 bg-gray-100 md:flex-row dark:border-neutral-700 dark:bg-neutral-800"
       )}
     >
       <Sidebar open={open} setOpen={setOpen}>
@@ -185,8 +190,8 @@ export function SidebarDemo() {
 }
 export const Logo = () => {
   return (
-    <a
-      href="#"
+    <NavLink
+      to={"/"}
       className="relative z-20 flex items-center space-x-2 py-1 text-sm font-normal text-black"
     >
       <img
@@ -200,7 +205,7 @@ export const Logo = () => {
       >
         Ai Thumbnail Generator{" "}
       </motion.span>
-    </a>
+    </NavLink>
   );
 };
 export const LogoIcon = () => {
