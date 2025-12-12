@@ -43,7 +43,8 @@ interface aiGenImageRes {
 
 export const CreateNewImage = async (
   req: Request,
-  res: Response<ApiResponse<History>>
+  res: Response<ApiResponse<History>>,
+  next: Function
 ) => {
   try {
     const user = req?.user;
@@ -189,6 +190,7 @@ export const CreateNewImage = async (
     });
   } catch (error) {
     console.log("Error in CreateNewImage:", error);
+    next(error);
     throw new ApiError(500, "Internal Server Error", error);
   }
 };

@@ -8,7 +8,8 @@ import { DeleteFile } from "../utils/Cloudinary";
 
 export const GetUserAllSession = async (
   req: Request,
-  res: Response<ApiResponse<Session>>
+  res: Response<ApiResponse<Session>>,
+  next: Function
 ) => {
   try {
     const User = req?.user;
@@ -31,28 +32,40 @@ export const GetUserAllSession = async (
     });
   } catch (error) {
     console.log("error during getUserAllSession", error);
+    next(error);
+    throw new ApiError(500, "Internal Server Error", error);
   }
 };
 
 export const DeleteSingleSession = async (
   req: Request,
-  res: Response<ApiResponse<Session>>
+  res: Response<ApiResponse<Session>>,
+  next: Function
 ) => {
   try {
     const User = req?.user;
-    const sessionId  = req?.body?.sessionId;
-    if (!User) throw new ApiError(401, "User not authorized", "User not authorized");
-    if (!sessionId) throw new ApiError(400, "Session Id is required", "Session Id is required");
+    const sessionId = req?.body?.sessionId;
+    if (!User)
+      throw new ApiError(401, "User not authorized", "User not authorized");
+    if (!sessionId)
+      throw new ApiError(
+        400,
+        "Session Id is required",
+        "Session Id is required"
+      );
 
     const deletedSession = await SessionController.findOneAndDelete({
       userId: User._id,
       sessionId,
     });
-    const UserDocuments = await HistoryController.find({ userId: User._id, sessionId });
-    console.log('UserDocuments', UserDocuments);
+    const UserDocuments = await HistoryController.find({
+      userId: User._id,
+      sessionId,
+    });
+    console.log("UserDocuments", UserDocuments);
     if (UserDocuments.length !== 0) {
       console.log("No documents found for this session");
-    
+
       await Promise.all(
         UserDocuments.map(async (doc) => {
           doc.ImagePublicId!.forEach(async (id) => {
@@ -65,11 +78,13 @@ export const DeleteSingleSession = async (
         })
       ).catch((error) => {
         console.log("error during deleting user documents", error);
+        next(error);
         throw new ApiError(500, "Internal server error", error);
       });
     }
 
-    if (!deletedSession) throw new ApiError(404, "Session not Exists", "Session not Exists");
+    if (!deletedSession)
+      throw new ApiError(404, "Session not Exists", "Session not Exists");
     return res.json({
       success: true,
       message: "session deleted successfully",
@@ -77,21 +92,28 @@ export const DeleteSingleSession = async (
     });
   } catch (error) {
     console.log("error during getSingleSession", error);
+    next(error);
     throw new ApiError(500, "error in get singlesession", error);
   }
 };
 
 export const EditSessionTitle = async (
   req: Request,
-  res: Response<ApiResponse<Session>>
+  res: Response<ApiResponse<Session>>,
+  next: Function
 ) => {
   try {
     const sessionName = req?.body?.sessionName;
     const sessionId = req?.body?.sessionId;
     const User = req?.user;
     if (!sessionId || !sessionName)
-      throw new ApiError(400, "All parameters are Required!", "All parameters are Required!");
-    if (!User) throw new ApiError(401, "User not authorized", "User not authorized");
+      throw new ApiError(
+        400,
+        "All parameters are Required!",
+        "All parameters are Required!"
+      );
+    if (!User)
+      throw new ApiError(401, "User not authorized", "User not authorized");
     const session = await SessionController.findOne({
       userId: User._id,
       sessionId,
@@ -108,13 +130,15 @@ export const EditSessionTitle = async (
     });
   } catch (error) {
     console.log("error during edit Session Title", error);
+    next(error);
     throw new ApiError(500, "error during edit Session Title", error);
   }
 };
 
 export const DeleteAllSession = async (
   req: Request,
-  res: Response<ApiResponse<Session>>
+  res: Response<ApiResponse<Session>>,
+  next: Function
 ) => {
   try {
     const User = req?.user;
@@ -126,7 +150,7 @@ export const DeleteAllSession = async (
     });
 
     const UserDocuments = await HistoryController.find({ userId: User._id });
-   
+
     await Promise.all(
       UserDocuments.map(async (doc) => {
         doc.ImagePublicId!.forEach(async (id) => {
@@ -152,45 +176,59 @@ export const DeleteAllSession = async (
     });
   } catch (error) {
     console.log("error during deleting all Session", error);
+    next(error);
     throw new ApiError(500, "Internal Server error", error);
   }
 };
 
 export const CreateNewSession = async (
-    req: Request, res: Response<ApiResponse<Session>>) => { 
-    try {
-        const User = req?.user;
-        if (!User) {
-            throw new ApiError(401, "User not Authorized", "User not Authorized");
-      }
-      console.log('req.body session new', User);
-        const  sessionId = req?.body?.sessionId;
-        const sessionName = req?.body?.sessionName;
-        if (!sessionId) {
-            throw new ApiError(400, "Session Id and Session Name are required", "Session Id and Session Name are required");
-      }
-      const existingSession = await SessionController.findOne({userId: User._id, sessionId});
-      if (existingSession) {
-        throw new ApiError(409, 'Session with this ID already exists', 'Session with this ID already exists')
-      }
-        const newSession =await SessionController.create({
-            sessionId,
-            sessionName,
-            userId: User._id
-        });
-        if (!newSession) {
-            throw new ApiError(500,'Internal server Error', 'Internal server Error')
-        }
-        return res.json({
-            success: true,
-            message: "session created successfully",
-            data: [newSession],
-            statusCode:200
-        })
-    } catch (error) {
-        console.log('error during creating new Session', error);
-        throw new ApiError(500,
-            "Internal Server Error", error
-        )
+  req: Request,
+  res: Response<ApiResponse<Session>>,
+  next: Function
+) => {
+  try {
+    const User = req?.user;
+    if (!User) {
+      throw new ApiError(401, "User not Authorized", "User not Authorized");
     }
-}
+    console.log("req.body session new", User);
+    const sessionId = req?.body?.sessionId;
+    const sessionName = req?.body?.sessionName;
+    if (!sessionId) {
+      throw new ApiError(
+        400,
+        "Session Id and Session Name are required",
+        "Session Id and Session Name are required"
+      );
+    }
+    const existingSession = await SessionController.findOne({
+      userId: User._id,
+      sessionId,
+    });
+    if (existingSession) {
+      throw new ApiError(
+        409,
+        "Session with this ID already exists",
+        "Session with this ID already exists"
+      );
+    }
+    const newSession = await SessionController.create({
+      sessionId,
+      sessionName,
+      userId: User._id,
+    });
+    if (!newSession) {
+      throw new ApiError(500, "Internal server Error", "Internal server Error");
+    }
+    return res.json({
+      success: true,
+      message: "session created successfully",
+      data: [newSession],
+      statusCode: 200,
+    });
+  } catch (error) {
+    console.log("error during creating new Session", error);
+    next(error);
+    throw new ApiError(500, "Internal Server Error", error);
+  }
+};

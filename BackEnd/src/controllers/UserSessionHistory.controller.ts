@@ -7,7 +7,8 @@ import { DeleteFile } from "../utils/Cloudinary";
 
 export const GetSessionHistory = async (
   req: Request,
-  res: Response<ApiResponse<History>>
+  res: Response<ApiResponse<History>>,
+  next: Function
 ) => {
   try {
     const User = req?.user;
@@ -33,13 +34,15 @@ export const GetSessionHistory = async (
     });
   } catch (error) {
     console.log("Internal server Error", error);
+    next(error);
     throw new ApiError(500, "internal server Error", error);
   }
 };
 
 export const DeleteSessionChat = async (
   req: Request<{}, {}, { data: History }>,
-  res: Response<ApiResponse<null>>
+  res: Response<ApiResponse<null>>,
+  next: Function
 ) => {
   try {
     const User = req?.user;
@@ -75,6 +78,7 @@ export const DeleteSessionChat = async (
     });
   } catch (error) {
     console.log("Internal server Error", error);
+    next(error);
     throw new ApiError(500, "internal server Error", error);
   }
 };

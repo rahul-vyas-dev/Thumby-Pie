@@ -7,7 +7,8 @@ import { sendEmail } from "../helpers/SendEmail";
 
 export const SignUp = async (
   req: Request,
-  res: Response<ApiResponse<User>>
+  res: Response<ApiResponse<User>>,
+  next: Function
 ) => {
   try {
     const { email, password, name } = req.body;
@@ -64,22 +65,15 @@ export const SignUp = async (
       "error in registering user ->(src :: app :: api :: signUp :: route)",
       error
     );
+    next(error);
     throw new ApiError(500, "error in registering user", error);
-    // return Response.json(
-    //   {
-    //     success: false,
-    //     message: "error in registering user",
-    //   },
-    //   {
-    //     status: 500,
-    //   }
-    // );
   }
 };
 
 export const SignIn = async (
   req: Request,
-  res: Response<ApiResponse<User>>
+  res: Response<ApiResponse<User>>,
+  next: Function
 ) => {
   try {
     const email = req.body?.email;
@@ -122,13 +116,15 @@ export const SignIn = async (
       });
   } catch (error) {
     console.log("error during Sign-In ", error);
+    next(error);
     throw new ApiError(500, "error during Sign-In ", error);
   }
 };
 
 export const verifyCode = async (
   req: Request,
-  res: Response<ApiResponse<User>>
+  res: Response<ApiResponse<User>>,
+  next: Function
 ) => {
   try {
     const email = req.body?.email;
@@ -162,6 +158,7 @@ export const verifyCode = async (
     });
   } catch (error) {
     console.log("error during verify code ", error);
+    next(error);
     throw new ApiError(500, "error during verify code ", error);
   }
 };
