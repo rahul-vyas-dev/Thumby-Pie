@@ -5,7 +5,7 @@ import { useState } from "react";
 import { useForm, type SubmitHandler } from "react-hook-form";
 import { toast } from "sonner";
 import { Button } from "./Button";
-
+axios.defaults.withCredentials = true;
 const url = import.meta.env.VITE_BACKEND_URL;
 
 interface dataObj {

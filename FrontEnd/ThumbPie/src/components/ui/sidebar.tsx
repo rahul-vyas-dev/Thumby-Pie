@@ -15,6 +15,7 @@ import axios from "axios";
 import { useSessionStore } from "@/store/useSessionStore";
 import { useForm, type SubmitHandler } from "react-hook-form";
 const url = import.meta.env.VITE_BACKEND_URL;
+axios.defaults.withCredentials = true;
 interface sessionObj {
   sessionId: string;
   userId: string;

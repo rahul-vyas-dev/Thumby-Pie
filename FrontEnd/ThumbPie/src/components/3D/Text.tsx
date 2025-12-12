@@ -1,3 +1,6 @@
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-nocheck
+/* eslint-disable react-hooks/immutability */
 // https://cydstumpel.nl/
 
 import * as THREE from "three";
@@ -43,7 +46,7 @@ export const Text = () => {
           <Rig rotation={[0, 0, 0.15]}>
             <Carousel />
           </Rig>
-          <Banner position={[0, -0.15, 0]} />
+          <Banner props={[0, -0.15, 0]} />
         </ScrollControls>
         {theme === "light" && (
           <Environment preset="sunset" background blur={0.5} />
@@ -129,12 +132,12 @@ function Card({ url, ...props }) {
   );
 }
 
-function Banner(props: [number]) {
+function Banner({ props }: {props:number[]}) {
   const ref = useRef<Mesh>(null!);
   const texture = useTexture(imageWork);
   texture.wrapS = texture.wrapT = THREE.RepeatWrapping;
   const scroll = useScroll();
-  useFrame((state, delta) => {
+  useFrame((_state, delta) => {
     ref.current.material.time.value += Math.abs(scroll.delta) * 4;
     ref.current.material.map.offset.x += delta / 2;
   });

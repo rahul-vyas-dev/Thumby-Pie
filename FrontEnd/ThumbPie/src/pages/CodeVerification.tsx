@@ -7,7 +7,7 @@ import { useForm, type SubmitHandler } from "react-hook-form";
 import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
 const url = import.meta.env.VITE_BACKEND_URL;
-
+axios.defaults.withCredentials = true;
 interface CodeVerificationValue {
   email: string;
   code: string;

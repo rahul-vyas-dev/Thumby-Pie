@@ -16,7 +16,7 @@ import { useUserStore } from "@/store/useUserStore";
 import { useSessionStore } from "@/store/useSessionStore";
 import { type sessionState } from "@/store/useSessionStore";
 const url = import.meta.env.VITE_BACKEND_URL;
-
+axios.defaults.withCredentials = true;
 interface FormValue {
   prompt: string;
   UserImage: File[] | null;

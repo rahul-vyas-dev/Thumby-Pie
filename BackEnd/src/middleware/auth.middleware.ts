@@ -10,8 +10,9 @@ export const VerifyJWT = async (req: Request, res: Response, next: NextFunction)
   try {
     const token =
       req?.cookies?.accessToken ||
-          req.headers["authorization"]?.replace("Bearer ", "");
-      
+      req.headers["authorization"]?.replace("Bearer ", "");
+    console.log("cookie", req.cookies);
+    console.log("token", token);
     if (!token) {
       throw new ApiError(401, "not authorized!");
     }

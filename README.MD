@@ -15,7 +15,7 @@ Thumby-Pie is a full-stack web application for generating, managing, and sharing
 
 ## Tech Stack
 
-- **Frontend:** React, TypeScript, Vite
+- **Frontend:** React, TypeScript, Vite, Tailwind, zustand, react router dom, React hook form, axios, lucid react 
 - **Backend:** Node.js, Express, TypeScript, Mongoose
 - **Database:** MongoDB
 - **Image Storage:** Cloudinary

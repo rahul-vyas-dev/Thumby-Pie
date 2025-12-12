@@ -6,7 +6,7 @@ import { useSessionStore } from "@/store/useSessionStore";
 import { toast } from "sonner";
 import { SendHorizonal, SquarePen, Trash2 } from "lucide-react";
 import { Button } from "./Button";
-import { selectUserData, useUserStore } from "@/store/useUserStore";
+// import { selectUserData, useUserStore } from "@/store/useUserStore";
 import axios from "axios";
 import { useForm } from "react-hook-form";
 import { type SubmitHandler } from "react-hook-form";
@@ -14,7 +14,7 @@ import ATG from "@/assets/images/ATG.png";
 import { useHistoryStore } from "@/store/useHistoryStore";
 import { Dashboard } from "./Dashboard";
 import { NavLink } from "react-router-dom";
-
+axios.defaults.withCredentials = true;
 const url = import.meta.env.VITE_BACKEND_URL;
 
 export function SidebarDemo() {
@@ -24,11 +24,11 @@ export function SidebarDemo() {
   );
   const setSessionDataMethod = useSessionStore((state) => state.setData);
 
-  const userObj = useUserStore((state) => state);
+  // const userObj = useUserStore((state) => state);
   const [sessionLenght, setSessionLenght] = useState(
     sessionObj?.data.length as number
   );
-  const user = selectUserData(userObj);
+  // const user = selectUserData(userObj);
 
   useEffect(() => {
     if (!sessionObj) {
@@ -77,20 +77,8 @@ export function SidebarDemo() {
       })
       .then((res) => {
         console.log("res success", res);
-        setSessionDataMethod({
-          success: true,
-          message: "New session created successfully",
-          statusCode: 200,
-          data: [
-            {
-              sessionId,
-              userId: user?._id as string,
-              sessionName: data.sessionName,
-              createdAt: Date.now().toLocaleString(),
-              lastUpdated: Date.now().toLocaleString(),
-            },
-          ],
-        });
+        setSessionDataMethod(res.data);
+        console.log(sessionObj);
         toast.success(res.data.message);
         setSessionLenght(sessionLenght + 1);
       })

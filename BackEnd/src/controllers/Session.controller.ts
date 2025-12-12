@@ -22,6 +22,7 @@ export const GetUserAllSession = async (
     if (!Sessions) {
       throw new ApiError(404, "No session found", "No session found");
     }
+    console.log("all session", Sessions);
     res.json({
       success: true,
       message: "Session found successfully",
@@ -162,7 +163,7 @@ export const CreateNewSession = async (
         if (!User) {
             throw new ApiError(401, "User not Authorized", "User not Authorized");
       }
-      console.log('req.body', User);
+      console.log('req.body session new', User);
         const  sessionId = req?.body?.sessionId;
         const sessionName = req?.body?.sessionName;
         if (!sessionId) {
