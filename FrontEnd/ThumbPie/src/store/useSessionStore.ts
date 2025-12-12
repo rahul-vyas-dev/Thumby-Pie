@@ -25,7 +25,10 @@ export const useSessionStore = create<sessionStore>((set) => ({
   data: null,
   setData: (data: sessionState) =>
     set((state) => {
-      if (!state.data) return state;
+      console.log('this is existing state data', data);
+        if (!state.data) {
+          return { data: data };
+        }
       return {
         data: {
           ...state.data,

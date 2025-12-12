@@ -243,13 +243,13 @@ export const SidebarLink = ({
       )}
       {...props}
       initial={{ opacity: 0.9, y: 200 }}
-      whileInView={{ opacity: 1, y: 0 }}
+      animate={{ opacity: 1, y: 0 }}
       transition={{
         delay: 0.3,
         duration: 0.3,
         ease: "easeInOut",
       }}
-      viewport={{once:true}}
+      viewport={{ once: true }}
       whileHover={{
         opacity: 0.4,
         transition: { delay: 0, duration: 0 },
@@ -285,7 +285,7 @@ export const SidebarLink = ({
                   : "inline-block",
                 opacity: animate ? (open ? 1 : 0) : 1,
               }}
-              className="text-neutral-700 dark:text-neutral-200 text-sm group-hover/sidebar:translate-x-1 transition duration-150 whitespace-pre inline-block p-0! m-0!"
+              className="text-neutral-700 dark:text-neutral-200 text-sm group-hover/sidebar:translate-x-1 transition duration-150 whitespace-nowrap overflow-hidden text-ellipsis inline-block max-w-[150px] min-w-0"
             >
               <b>{sessionObj?.sessionName}</b>
             </motion.span>
