@@ -1,0 +1,27 @@
+# Dependencies
+node_modules
+
+# Build output
+dist
+
+# Environment variables
+.env
+.env.*
+
+# Logs
+logs
+*.log
+
+# Git
+.git
+.gitignore
+
+# Tests & docs (optional)
+tests
+coverage
+README.md
+
+# Editor / OS files
+.vscode
+.idea
+.DS_Store
