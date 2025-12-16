@@ -3,16 +3,16 @@ services:
   frontend:
     build: ./FrontEnd/ThumbPie
     ports:
-      -"80:80"
+      - 80:80
     depends_on:
       - backend
 
   backend:
     build: ./BackEnd
     ports:
-      -"5000:5000"
+      - 5000:5000
     env_file:
-      - .env
+      - ./BackEnd/.env
     depends_on:
       - mongo
 
