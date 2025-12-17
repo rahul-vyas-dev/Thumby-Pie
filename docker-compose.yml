@@ -1,3 +1,32 @@
+# run this while dev time 
+# version: '3.9'
+# services:
+#   frontend:
+#     build: ./FrontEnd/ThumbPie
+#     ports:
+#       - 80:80
+#     depends_on:
+#       - backend
+
+#   backend:
+#     build: ./BackEnd
+#     ports:
+#       - 5000:5000
+#     env_file:
+#       - ./BackEnd/.env
+#     depends_on:
+#       - mongo
+
+#   mongo:
+#     image: mongo:6
+#     volumes:
+#       - mongo_data:/data/db
+
+# volumes:
+#   mongo_data:
+
+
+##production time 
 version: '3.9'
 services:
   frontend:
@@ -13,13 +42,4 @@ services:
       - 5000:5000
     env_file:
       - ./BackEnd/.env
-    depends_on:
-      - mongo
-
-  mongo:
-    image: mongo:6
-    volumes:
-      - mongo_data:/data/db
-
-volumes:
-  mongo_data:
+ 
