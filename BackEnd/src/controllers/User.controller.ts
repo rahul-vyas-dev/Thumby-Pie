@@ -104,7 +104,7 @@ export const SignIn = async (
       .cookie("accessToken", token, {
         httpOnly: true, // JS cannot access it
         secure: process.env.NODE_ENV === "production", // only over HTTPS
-        sameSite: "lax",
+        sameSite: "none",
         maxAge: 60 * 60 * 10000, // 1 hour
       })
       .json({
