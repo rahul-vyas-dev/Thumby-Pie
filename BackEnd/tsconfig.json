@@ -11,6 +11,7 @@
     "skipLibCheck": true,
     "forceConsistentCasingInFileNames": true,
     "types": ["node"],
+    "noImplicitAny": false,
     "typeRoots": ["./src/@types", "./node_modules/@types"],
   },
   "include": ["src"]
