@@ -1,7 +1,7 @@
 export const BlogData = [
   {
     id: 1,
-    profile: "https://i.pravatar.cc/150?img=1",
+    profile: `https://i.pravatar.cc/150?img=${Math.floor(Math.random() * 4)}`,
     author: "Aarav Mehta",
     title: "How AI Is Transforming Daily Tasks",
     desc: "A breakdown of how AI silently powers apps, tools, and automation we use every day.",
@@ -9,7 +9,7 @@ export const BlogData = [
   },
   {
     id: 2,
-    profile: "https://i.pravatar.cc/150?img=2",
+    profile: `https://i.pravatar.cc/150?img=${Math.floor(Math.random() * (6 - 3 + 1)) + 3}`,
     author: "Riya Sharma",
     title: "Minimal UI Trends in 2025",
     desc: "Why clean layouts, spacing, and modern typography improve user experiences.",
@@ -17,7 +17,7 @@ export const BlogData = [
   },
   {
     id: 3,
-    profile: "https://i.pravatar.cc/150?img=3",
+    profile: `https://i.pravatar.cc/150?img=${Math.floor(Math.random() * (6 - 3 + 1)) + 6}`,
     author: "Karan Verma",
     title: "Modern JavaScript: What’s New?",
     desc: "Exploring advances in JS frameworks, tooling, and performance improvements.",
@@ -25,7 +25,7 @@ export const BlogData = [
   },
   {
     id: 4,
-    profile: "https://i.pravatar.cc/150?img=4",
+    profile: `https://i.pravatar.cc/150?img=${Math.floor(Math.random() * (6 - 3 + 1)) + 9}`,
     author: "Neha Singh",
     title: "Boost Your Study Productivity",
     desc: "Tips on learning techniques, focus habits, and time management tricks.",
@@ -33,7 +33,7 @@ export const BlogData = [
   },
   {
     id: 5,
-    profile: "https://i.pravatar.cc/150?img=5",
+    profile: `https://i.pravatar.cc/150?img=${Math.floor(Math.random() * (6 - 3 + 1)) + 12}`,
     author: "Siddharth Rao",
     title: "Cloud Hosting for Beginners",
     desc: "Understanding hosting types, VPS, DNS, domain routing, and server basics.",
@@ -41,7 +41,7 @@ export const BlogData = [
   },
   {
     id: 6,
-    profile: "https://i.pravatar.cc/150?img=6",
+    profile: `https://i.pravatar.cc/150?img=${Math.floor(Math.random() * (6 - 3 + 1)) + 15}`,
     author: "Meera Kapoor",
     title: "Top Travel Destinations in 2025",
     desc: "A curated list of trending places to visit this year with reasons to explore them.",
@@ -49,7 +49,7 @@ export const BlogData = [
   },
   {
     id: 7,
-    profile: "https://i.pravatar.cc/150?img=7",
+    profile: `https://i.pravatar.cc/150?img=${Math.floor(Math.random() * (6 - 3 + 1)) + 18}`,
     author: "Aditya Jain",
     title: "How Startups Use Data Smartly",
     desc: "Insights into user behavior, funnel optimization, and analytics strategy.",
@@ -57,7 +57,7 @@ export const BlogData = [
   },
   {
     id: 8,
-    profile: "https://i.pravatar.cc/150?img=8",
+    profile: `https://i.pravatar.cc/150?img=${Math.floor(Math.random() * (6 - 3 + 1)) + 21}`,
     author: "Priya Nair",
     title: "Meditation for Beginners",
     desc: "Simple breathing techniques and routines to develop a calm lifestyle.",
@@ -65,7 +65,7 @@ export const BlogData = [
   },
   {
     id: 9,
-    profile: "https://i.pravatar.cc/150?img=9",
+    profile: `https://i.pravatar.cc/150?img=${Math.floor(Math.random() * (6 - 3 + 1)) + 24}`,
     author: "Harshit Malhotra",
     title: "Future of Electric Vehicles",
     desc: "Exploring battery innovations, charging networks, and EV industry growth.",
@@ -73,7 +73,7 @@ export const BlogData = [
   },
   {
     id: 10,
-    profile: "https://i.pravatar.cc/150?img=10",
+    profile: `https://i.pravatar.cc/150?img=${Math.floor(Math.random() * (6 - 3 + 1)) + 27}`,
     author: "Sara Ali",
     title: "Habit Building Made Simple",
     desc: "Understanding triggers, routines, and small actions that build strong habits.",
@@ -82,7 +82,7 @@ export const BlogData = [
 
   {
     id: 11,
-    profile: "https://i.pravatar.cc/150?img=11",
+    profile: `https://i.pravatar.cc/150?img=${Math.floor(Math.random() * (6 - 3 + 1)) + 30}`,
     author: "Arjun Khanna",
     title: "Machine Learning Basics",
     desc: "Explaining models, datasets, and training concepts in simple words.",
@@ -90,7 +90,7 @@ export const BlogData = [
   },
   {
     id: 12,
-    profile: "https://i.pravatar.cc/150?img=12",
+    profile: `https://i.pravatar.cc/150?img=${Math.floor(Math.random() * (6 - 3 + 1)) + 33}`,
     author: "Ishita Verma",
     title: "Working Remotely in 2025",
     desc: "How remote teams stay productive using apps, async comms, and workflows.",
@@ -98,7 +98,7 @@ export const BlogData = [
   },
   {
     id: 13,
-    profile: "https://i.pravatar.cc/150?img=13",
+    profile: `https://i.pravatar.cc/150?img=${Math.floor(Math.random() * (6 - 3 + 1)) + 36}`,
     author: "Rohan Jain",
     title: "Power of Morning Routines",
     desc: "Scientific explanation of why morning habits boost energy and clarity.",
@@ -106,7 +106,7 @@ export const BlogData = [
   },
   {
     id: 14,
-    profile: "https://i.pravatar.cc/150?img=14",
+    profile: `https://i.pravatar.cc/150?img=${Math.floor(Math.random() * (6 - 3 + 1)) + 39}`,
     author: "Tanya Sharma",
     title: "Why Reading Makes You Smarter",
     desc: "How reading shapes your mindset, focus, and creativity.",
@@ -114,7 +114,7 @@ export const BlogData = [
   },
   {
     id: 15,
-    profile: "https://i.pravatar.cc/150?img=15",
+    profile: `https://i.pravatar.cc/150?img=${Math.floor(Math.random() * (6 - 3 + 1)) + 42}`,
     author: "Dev Gupta",
     title: "React vs Vue in 2025",
     desc: "A practical comparison of both frameworks with new updates.",
@@ -123,7 +123,7 @@ export const BlogData = [
 
   {
     id: 16,
-    profile: "https://i.pravatar.cc/150?img=16",
+    profile: `https://i.pravatar.cc/150?img=${Math.floor(Math.random() * (6 - 3 + 1)) + 45}`,
     author: "Kavya Menon",
     title: "Photography Tips for Beginners",
     desc: "Understanding lighting, composition, and manual camera controls.",
@@ -131,7 +131,7 @@ export const BlogData = [
   },
   {
     id: 17,
-    profile: "https://i.pravatar.cc/150?img=17",
+    profile: `https://i.pravatar.cc/150?img=${Math.floor(Math.random() * (6 - 3 + 1)) + 48}`,
     author: "Manav Singh",
     title: "Healthy Eating Made Easy",
     desc: "Simple food swaps and small lifestyle changes to improve wellness.",
@@ -139,7 +139,7 @@ export const BlogData = [
   },
   {
     id: 18,
-    profile: "https://i.pravatar.cc/150?img=18",
+    profile: `https://i.pravatar.cc/150?img=${Math.floor(Math.random() * (6 - 3 + 1)) + 51}`,
     author: "Ayesha Qureshi",
     title: "Understanding Cryptocurrency",
     desc: "Basics of blockchain, coins, wallets, and real-world use cases.",
@@ -147,7 +147,7 @@ export const BlogData = [
   },
   {
     id: 19,
-    profile: "https://i.pravatar.cc/150?img=19",
+    profile: `https://i.pravatar.cc/150?img=${Math.floor(Math.random() * (6 - 3 + 1)) + 54}`,
     author: "Vishal Rao",
     title: "The Rise of No-Code Tools",
     desc: "How no-code platforms are empowering individuals to build apps faster.",
