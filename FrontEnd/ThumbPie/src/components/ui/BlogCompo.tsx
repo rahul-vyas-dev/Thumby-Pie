@@ -18,7 +18,7 @@ function BlogCompo({ data }: UserData) {
           alt="userImage"
           className="h-64 rounded-2xl rounded-bl-none rounded-br-none w-full"
         />
-        <main className="p-7 bg-[oklch(0.2_0_0)] rounded-bl-2xl rounded-br-2xl">
+        <main className="p-7 bg-[oklch(0.2_0_0)] rounded-bl-2xl rounded-br-2xl text-white ">
           <div className="flex items-center gap-4">
             <img
               src={data.profile}
