@@ -10,7 +10,7 @@ function Blog() {
         <b className="mt-4 text-3xl">Feedback that keeps us growing.</b>
       </main>
 
-      <main className="w-full grid grid-cols-1 gap-6 text-center p-7 xl:grid-cols-2 2xl:grid-cols-3 mt-7">
+      <main className="w-full grid grid-cols-1 gap-6 text-center p-7 lg:grid-cols-2 xl:grid-cols-3 mt-7">
         {BlogData.map((data) => {
           return <BlogCompo data={data} />;
         })}
