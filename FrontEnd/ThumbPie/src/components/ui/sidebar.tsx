@@ -303,7 +303,10 @@ export const SidebarLink = ({
             ) : (
               <Pencil
                 className="text-black dark:text-white"
-                onClick={() => setIsInput(true)}
+                  onClick={(e) => {
+                    e.preventDefault();
+                    setIsInput(true)
+                  }}
               />
             )}
           </span>
