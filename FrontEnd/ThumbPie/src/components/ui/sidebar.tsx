@@ -274,6 +274,7 @@ export const SidebarLink = ({
               }}
               className="text-neutral-700 dark:text-neutral-200 text-sm group-hover/sidebar:translate-x-1 transition duration-150 whitespace-pre inline-block m-0! w-[10em] overflow-clip outline-1 rounded-2xl p-3"
               {...register("sessionName")}
+              onClick={(e)=>e.preventDefault()}
             ></motion.input>
           ) : (
             <motion.span
