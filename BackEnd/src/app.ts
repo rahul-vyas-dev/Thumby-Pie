@@ -1,4 +1,5 @@
-import express, { Application, NextFunction, Request, Response } from "express";
+import express from "express";
+import type { Application, Request, Response, NextFunction } from "express";
 import cors from "cors";
 import sessionRoutes from "./routes/session.routes";
 import imageRoutes from "./routes/image.routes";
@@ -26,16 +27,16 @@ app.use(cookieParser());
 app.use(express.static("public"));
 
 
-app.use("/api/v1/sessions", (req, res, next) =>
+app.use("/api/v1/sessions", (req:Request, res:Response, next:NextFunction) =>
   Promise.resolve(sessionRoutes(req, res, next)).catch(next)
 );
-app.use("/api/v1/images", (req, res, next) =>
+app.use("/api/v1/images", (req:Request, res:Response, next:NextFunction) =>
   Promise.resolve(imageRoutes(req, res, next)).catch(next)
 );
-app.use("/api/v1/session-history", (req, res, next) =>
+app.use("/api/v1/session-history", (req:Request, res:Response, next:NextFunction) =>
   Promise.resolve(userSessionHistoryRoutes(req, res, next)).catch(next)
 );
-app.use("/api/v1/auth", (req, res, next) =>
+app.use("/api/v1/auth", (req:Request, res:Response, next:NextFunction) =>
   Promise.resolve(AuthRoutes(req, res, next)).catch(next)
 );
 app.use((err: any, req:Request, res:Response, next:NextFunction) => {
