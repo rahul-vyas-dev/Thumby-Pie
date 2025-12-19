@@ -36,7 +36,7 @@ export function SidebarDemo() {
       // console.log("");
     }
   }, [sessionObj]);
-  
+
   const [open, setOpen] = useState(false);
   const [isInput, setIsInput] = useState(false);
   const handleClearSessionHistory = async () => {
@@ -130,7 +130,12 @@ export function SidebarDemo() {
                         defaultValue={`Untitled Session ${sessionLenght}`}
                         {...register("sessionName")}
                       ></input>
-                      <span onClick={handleSubmit(handleCreateNewSession)}>
+                      <span
+                        onClick={(e) => {
+                          e.preventDefault();
+                          handleSubmit(handleCreateNewSession)();
+                        }}
+                      >
                         <SendHorizonal />
                       </span>
                     </form>
