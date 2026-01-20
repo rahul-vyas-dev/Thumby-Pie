@@ -3,7 +3,7 @@ import { useUserStore, selectIsAuthenticated } from "@/store/useUserStore";
 import { NavLink } from "react-router-dom";
 import { ModeToggle } from "./mode-toggle";
 import { Button } from "./ui/Button";
-import { LogIn } from "lucide-react";
+import { BookOpen, DollarSign, Home, LogIn } from "lucide-react";
 
 function Header() {
   const User = useUserStore((state) => state);
@@ -24,19 +24,22 @@ function Header() {
               to="/home"
               className={({ isActive }) => (isActive ? "text-red-900" : "")}
             >
-              <b className="">Home</b>
+              <b className="hidden sm:inline">Home</b>
+              <span className="inline sm:hidden"><Home/></span>
             </NavLink>
             <NavLink
               to="/pricing"
               className={({ isActive }) => (isActive ? "text-red-900" : "")}
             >
-              <b>Pricing</b>
+              <b className="hidden sm:inline">Pricing</b>
+              <span className="inline sm:hidden"><DollarSign/></span>
             </NavLink>
             <NavLink
               to="/blog"
               className={({ isActive }) => (isActive ? "text-red-900" : "")}
             >
-              <b>Blog</b>
+              <b className="hidden sm:inline">Blog</b>
+              <span className="inline sm:hidden"><BookOpen/></span>
             </NavLink>
           </span>
         </div>

@@ -1,10 +1,44 @@
-# Thumby-Pie
+<h1 align="center" style="margin-top: 30px;">
+  <a
+  href="https://atg-gilt.vercel.app/"
+  target="_blank"
+  rel="noopener noreferrer"
+  aria-label="Visit ATG project live demo website"
+  title="ATG – Live Project Demo"
+  >
+    <img
+    src="./assets/ATG-DtKSfTyM.png"
+    width="200"
+    height="200"
+    loading="lazy"
+    decoding="async"
+    style="
+      border-radius: 20px;
+      outline: 12px solid #d1d5dc;
+      background-color: transparent;
+    "
+    alt="ATG project logo – modern web application interface"
+    />
+  </a>
+</h1>
 
-## Description
+<!-- markdownlint-disable-next-line MD033 -->
+<h3 align='center'>
+<span style='font-size: 35px;'><b>Thumb-Pie - An Open Source Thought Generator</b></span>
+</h3>
 
-Thumby-Pie is a full-stack web application for generating, managing, and sharing AI-generated images. It features user authentication, session management, and a modern frontend for seamless user experience.
+<p align='center'>
+  <img src = "https://img.shields.io/badge/MongoDB-%234ea94b.svg?style=for-the-badge&logo=mongodb&logoColor=white">
+  <img src='https://img.shields.io/badge/TypeScript-3178C6?style=for-the-badge&logo=typescript&logoColor=white'>
+</p>
 
-## Key Features
+---
+<br>
+Thumby-Pie is a full-stack web application designed to generate, manage, and share AI-powered images through an intuitive and modern interface. It provides secure user authentication and persistent session management, allowing users to seamlessly access their previously generated creations at any time.
+
+Each session is automatically stored, enabling users to review, revisit, and re-edit earlier prompts and ideas without losing context. With a focus on usability, performance, and a smooth creative workflow, Thumby-Pie makes AI-driven image generation more organized, repeatable, and user-friendly.
+
+## 🚀 Key Features
 
 - AI-powered image generation
 - User authentication and session management
@@ -12,14 +46,45 @@ Thumby-Pie is a full-stack web application for generating, managing, and sharing
 - RESTful API backend
 - Modern React frontend
 - Cloudinary integration for image storage
+- Re-Edit generated Image
+- Blog Reading
+- CRUD operation on each and every Session
+- CRUD ooperation on each and every History/Chat
 
-## Tech Stack
+## 💻 Tech Stack
 
 - **Frontend:** React, TypeScript, Vite, Tailwind, zustand, react router dom, React hook form, axios, lucid react 
 - **Backend:** Node.js, Express, TypeScript, Mongoose
 - **Database:** MongoDB
 - **Image Storage:** Cloudinary
 - **Other:** bcryptjs, multer, dotenv, resend(for Email send), [AbstractAi](https://www.abstractapi.com/)
+
+<h2>🎥 Screenshots</h2>
+<div align="center">
+  <a
+    href="https://atg-gilt.vercel.app/"
+    target="_blank"
+    rel="noopener noreferrer"
+    aria-label="Visit ATG project live demo website"
+    title="ATG – Live Project Demo">
+      <img
+        src="./assets/main.png"
+        alt="Thumby-Pie main screen mobile view"
+        style="border-radius: 16px; margin: 8px;"
+      />
+      <img
+        src="./assets/three.png"
+        alt="Thumby-Pie image generation screen mobile view"
+        style="border-radius: 16px; margin: 8px;"
+      />
+      <img
+        src="./assets/animate.png"
+        alt="Thumby-Pie animation preview mobile view"
+        style="border-radius: 16px; margin: 8px;"
+      />
+  </a>
+</div>
+
 
 ## Project Structure
 
@@ -42,7 +107,7 @@ BackEnd/
 FrontEnd/
   └── ThumbPie/
       ├── src/                 # React source files
-      ├── public/              # Static assets
+      ├── dist/                # Static assets
       ├── package.json, vite.config.ts, tsconfig.json
 ```
 
@@ -100,22 +165,27 @@ See `.env.sample` for required variables:
 
 > `see **env.sample** file for more`
 
-## Contributing Guidelines
+# 🤝 Contributing
+⭐ Don't forget to star this repository if you find it useful! ⭐
 
-- Fork the repo and create a feature branch
-- Follow code style and naming conventions
-- Submit pull requests with clear descriptions
+Contributions are welcome! Feel free to fork the repository, create a feature or fix branch, and submit a pull request with a clear description of your changes. Please follow the existing code style and keep commits meaningful.
 
-## License
+Please refer to the [Contribution Guidelines](CONTRIBUTING.md) before proceed further.
 
-MIT License
+---
 
-## Contact / Author
+# 📍License
 
-- Author: Rahul Vyas
-- Email: rahul.vyas@example.com
-- GitHub: [rahul-vyas-dev](https://github.com/rahul-vyas-dev)
+Distributed under the MIT. See [LICENSE](LICENSE) for more info.
 
+# 📫 Contact / Author
+
+If you have any questions, need clarifications, or want to discuss ideas, feel free to reach out through the following channels:
+
+- Author: [Rahul Vyas](https://www.linkedin.com/in/rahul-vyas-a60b83370)
+- [Email](rahul.vyas@example.com)
+- [Github](https://github.com/rahul-vyas-dev)
+- [X](https://x.com/RahulVyas496824)
 
 ---
 ## Architecture Diagram
