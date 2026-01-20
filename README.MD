@@ -166,14 +166,17 @@ See `.env.sample` for required variables:
 > `see **env.sample** file for more`
 
 # 🤝 Contributing
+⭐ Don't forget to star this repository if you find it useful! ⭐
 
 Contributions are welcome! Feel free to fork the repository, create a feature or fix branch, and submit a pull request with a clear description of your changes. Please follow the existing code style and keep commits meaningful.
+
+Please refer to the [Contribution Guidelines](CONTRIBUTING.md) before proceed further.
 
 ---
 
 # 📍License
 
-## MIT License
+Distributed under the MIT. See [LICENSE](LICENSE) for more info.
 
 # 📫 Contact / Author
 
