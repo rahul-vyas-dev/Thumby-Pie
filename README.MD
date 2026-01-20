@@ -7,7 +7,7 @@
   title="ATG – Live Project Demo"
   >
     <img
-    src="./FrontEnd/ThumbPie/dist/assets/ATG-DtKSfTyM.png"
+    src="./assets/ATG-DtKSfTyM.png"
     width="200"
     height="200"
     loading="lazy"
@@ -68,17 +68,17 @@ Each session is automatically stored, enabling users to review, revisit, and re-
     aria-label="Visit ATG project live demo website"
     title="ATG – Live Project Demo">
       <img
-        src="./FrontEnd/ThumbPie/dist/assets/main.png"
+        src="./assets/main.png"
         alt="Thumby-Pie main screen mobile view"
         style="border-radius: 16px; margin: 8px;"
       />
       <img
-        src="./FrontEnd/ThumbPie/dist/assets/three.png"
+        src="./assets/three.png"
         alt="Thumby-Pie image generation screen mobile view"
         style="border-radius: 16px; margin: 8px;"
       />
       <img
-        src="./FrontEnd/ThumbPie/dist/assets/animate.png"
+        src="./assets/animate.png"
         alt="Thumby-Pie animation preview mobile view"
         style="border-radius: 16px; margin: 8px;"
       />
